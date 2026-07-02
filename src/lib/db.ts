@@ -46,6 +46,7 @@ db.version(2).stores({
       id: char.id,
       characterId: char.id,
       engineTemplate: 'midjourney',
+      characterContext: '',
       stages,
       createdAt: (char as CharacterBible).createdAt,
       updatedAt: Date.now(),

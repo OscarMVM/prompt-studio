@@ -5,6 +5,51 @@ import type { WorkflowStage, StageId } from '@/types/workflow'
 import { STAGE_EXTRACTION_RULES, STAGE_DEFINITIONS } from '@/data/stageTemplates'
 import { resolveFieldPath } from '@/lib/resolveFieldPath'
 
+export function buildCharacterContext(character: CharacterBible): string {
+  const parts: string[] = []
+  const g = character.general
+  const a = character.appearance
+
+  if (character.name) parts.push(character.name)
+
+  const identity = [
+    g.sex,
+    g.species,
+    g.race,
+    g.profession || g.role,
+    g.class,
+  ].filter(Boolean).join(' ')
+  if (identity) parts.push(identity)
+
+  const physique = [g.height, g.weight, g.constitution].filter(Boolean).join(', ')
+  if (physique) parts.push(physique)
+
+  const hair = [a.hair?.style, a.hair?.color].filter(Boolean).join(' ')
+  if (hair) parts.push(hair + ' hair')
+
+  const eyes = [a.eyes?.shape, a.eyes?.color].filter(Boolean).join(' ')
+  if (eyes) parts.push(eyes + ' eyes')
+
+  if (a.skinColor) parts.push(a.skinColor + ' skin')
+  if (a.faceShape) parts.push(a.faceShape + ' face')
+  if (a.beard) parts.push(a.beard + ' beard')
+  if (a.mustache) parts.push(a.mustache + ' mustache')
+  if (a.scars) parts.push('scarred: ' + a.scars)
+  if (a.tattoos) parts.push('tattoos: ' + a.tattoos)
+
+  if (character.emotionalPalette?.length) {
+    parts.push(character.emotionalPalette.join(', '))
+  }
+  if (character.visualPersonality?.length) {
+    parts.push(character.visualPersonality.join(', '))
+  }
+  if (character.references?.hasReferences) {
+    parts.push('reference image provided')
+  }
+
+  return parts.join(', ')
+}
+
 export function autoGenerateBlocksForStage(
   character: CharacterBible,
   stageId: StageId
@@ -65,12 +110,13 @@ export function autoPopulateAllStages(
 
 export function generateStagePrompt(
   blocks: PromptBlock[],
-  customText: string
+  customText: string,
+  characterContext?: string
 ): string {
   const enabled = blocks
     .filter((b) => b.enabled)
     .sort((a, b) => a.order - b.order)
 
   const blockText = enabled.map((b) => b.value).join(', ')
-  return [blockText, customText].filter(Boolean).join(', ')
+  return [characterContext, blockText, customText].filter(Boolean).join(', ')
 }

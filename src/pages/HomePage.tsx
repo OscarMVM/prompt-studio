@@ -1,18 +1,14 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, BookOpen } from 'lucide-react'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCharacterStore } from '@/stores/characterStore'
-import { createDefaultCharacter } from '@/data/defaults'
+import { CharacterCreationDialog } from '@/components/character/CharacterCreationDialog'
 
 export function HomePage() {
   const navigate = useNavigate()
-  const { createCharacter, characters } = useCharacterStore()
-
-  const handleNewCharacter = async () => {
-    const character = createDefaultCharacter()
-    await createCharacter(character)
-    navigate(`/characters/${character.id}/workflow`)
-  }
+  const { characters } = useCharacterStore()
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
@@ -26,7 +22,7 @@ export function HomePage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card
           className="cursor-pointer transition-colors hover:bg-accent/50"
-          onClick={handleNewCharacter}
+          onClick={() => setDialogOpen(true)}
         >
           <CardHeader>
             <Plus className="h-8 w-8 text-primary" />
@@ -68,6 +64,8 @@ export function HomePage() {
           </div>
         </div>
       )}
+
+      <CharacterCreationDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   )
 }

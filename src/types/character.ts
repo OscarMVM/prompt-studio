@@ -25,6 +25,7 @@ export interface GeneralInfo {
 
 export interface Appearance {
   skinColor?: string
+  faceShape?: string
   hair?: {
     style?: string
     color?: string
@@ -33,11 +34,16 @@ export interface Appearance {
     shape?: string
     color?: string
   }
+  eyelashes?: string
+  eyebrows?: string
   nose?: string
   lips?: string
   jaw?: string
   chin?: string
   ears?: string
+  beard?: string
+  mustache?: string
+  freckles?: string
   neck?: string
   shoulders?: string
   arms?: string
@@ -110,6 +116,25 @@ export type VisualPersonalityTag =
   | 'minimalist'
   | 'ornate'
 
+export type EmotionalPaletteTag =
+  | 'serious'
+  | 'smiling'
+  | 'melancholic'
+  | 'aggressive'
+  | 'mysterious'
+  | 'elegant'
+  | 'innocent'
+  | 'dark'
+  | 'playful'
+  | 'stoic'
+  | 'passionate'
+  | 'serene'
+
+export interface CharacterReference {
+  hasReferences: boolean
+  notes?: string
+}
+
 export interface CharacterBible {
   id: string
   name: string
@@ -123,4 +148,6 @@ export interface CharacterBible {
   materials: Materials
   colors: Colors
   visualPersonality: VisualPersonalityTag[]
+  emotionalPalette: EmotionalPaletteTag[]
+  references?: CharacterReference
 }

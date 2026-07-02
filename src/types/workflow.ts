@@ -38,6 +38,7 @@ export interface WorkflowProject {
   id: string
   characterId: string
   engineTemplate: string
+  characterContext: string
   stages: WorkflowStage[]
   createdAt: number
   updatedAt: number

@@ -21,7 +21,10 @@ export function WorkflowExportDialog() {
 
   const character = characters.find((c) => c.id === workflow.characterId)
   const template = engineTemplates.find((t) => t.id === workflow.engineTemplate)
-  const allPrompts = generateAllPrompts()
+  const allPrompts = generateAllPrompts().map((p) => ({
+    ...p,
+    prompt: [template?.prefix, p.prompt, template?.suffix].filter(Boolean).join(''),
+  }))
 
   const handleCopyAll = async () => {
     const text = allPrompts

@@ -21,5 +21,7 @@ export function createDefaultCharacter(): CharacterBible {
     materials: {},
     colors: {},
     visualPersonality: [],
+    emotionalPalette: [],
+    references: { hasReferences: false },
   }
 }

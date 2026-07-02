@@ -12,9 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useCharacterStore } from '@/stores/characterStore'
-import { createDefaultCharacter } from '@/data/defaults'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { CharacterCreationDialog } from '@/components/character/CharacterCreationDialog'
 
 const navItems = [
   { to: '/', icon: Home, label: 'Inicio' },
@@ -23,16 +23,10 @@ const navItems = [
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const navigate = useNavigate()
-  const { characters, activeCharacterId, setActiveCharacter, createCharacter, deleteCharacter } =
+  const { characters, activeCharacterId, setActiveCharacter, deleteCharacter } =
     useCharacterStore()
-
-  const handleNewCharacter = async () => {
-    const character = createDefaultCharacter()
-    await createCharacter(character)
-    setActiveCharacter(character.id)
-    navigate(`/characters/${character.id}/workflow`)
-  }
 
   return (
     <aside
@@ -89,7 +83,7 @@ export function Sidebar() {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
-              onClick={handleNewCharacter}
+              onClick={() => setDialogOpen(true)}
             >
               <Plus className="h-3 w-3" />
             </Button>
@@ -145,6 +139,8 @@ export function Sidebar() {
           {!collapsed && <span>Configuración</span>}
         </NavLink>
       </div>
+
+      <CharacterCreationDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </aside>
   )
 }

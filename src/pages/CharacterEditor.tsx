@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useAutoSave } from '@/hooks/useAutoSave'
-import type { CharacterBible, VisualPersonalityTag } from '@/types/character'
+import type { CharacterBible, VisualPersonalityTag, EmotionalPaletteTag, CharacterReference } from '@/types/character'
 import {
   User,
   Eye,
@@ -15,6 +15,8 @@ import {
   Swords,
   Palette,
   Sparkles,
+  Heart,
+  Link,
 } from 'lucide-react'
 
 function FieldGroup({
@@ -198,6 +200,11 @@ function AppearanceTab({
         onChange={(v) => updateApp({ skinColor: v })}
       />
       <FieldGroup
+        label="Forma del Rostro"
+        value={app.faceShape}
+        onChange={(v) => updateApp({ faceShape: v })}
+      />
+      <FieldGroup
         label="Estilo de Cabello"
         value={app.hair?.style}
         onChange={(v) => updateApp({ hair: { ...app.hair, style: v } })}
@@ -217,11 +224,24 @@ function AppearanceTab({
         value={app.eyes?.color}
         onChange={(v) => updateApp({ eyes: { ...app.eyes, color: v } })}
       />
+      <FieldGroup
+        label="Pestañas"
+        value={app.eyelashes}
+        onChange={(v) => updateApp({ eyelashes: v })}
+      />
+      <FieldGroup
+        label="Cejas"
+        value={app.eyebrows}
+        onChange={(v) => updateApp({ eyebrows: v })}
+      />
       <FieldGroup label="Nariz" value={app.nose} onChange={(v) => updateApp({ nose: v })} />
       <FieldGroup label="Labios" value={app.lips} onChange={(v) => updateApp({ lips: v })} />
       <FieldGroup label="Mandíbula" value={app.jaw} onChange={(v) => updateApp({ jaw: v })} />
       <FieldGroup label="Mentón" value={app.chin} onChange={(v) => updateApp({ chin: v })} />
       <FieldGroup label="Orejas" value={app.ears} onChange={(v) => updateApp({ ears: v })} />
+      <FieldGroup label="Barba" value={app.beard} onChange={(v) => updateApp({ beard: v })} />
+      <FieldGroup label="Bigote" value={app.mustache} onChange={(v) => updateApp({ mustache: v })} />
+      <FieldGroup label="Pecas" value={app.freckles} onChange={(v) => updateApp({ freckles: v })} />
       <FieldGroup label="Cuello" value={app.neck} onChange={(v) => updateApp({ neck: v })} />
       <FieldGroup
         label="Hombros"
@@ -510,6 +530,97 @@ function VisualPersonalityTab({
   )
 }
 
+function EmotionalPaletteTab({
+  character,
+  onUpdate,
+}: {
+  character: CharacterBible
+  onUpdate: (updates: Partial<CharacterBible>) => void
+}) {
+  const tags: { value: EmotionalPaletteTag; label: string }[] = [
+    { value: 'serious', label: 'Serio' },
+    { value: 'smiling', label: 'Sonriente' },
+    { value: 'melancholic', label: 'Melancólico' },
+    { value: 'aggressive', label: 'Agresivo' },
+    { value: 'mysterious', label: 'Misterioso' },
+    { value: 'elegant', label: 'Elegante' },
+    { value: 'innocent', label: 'Inocente' },
+    { value: 'dark', label: 'Oscuro' },
+    { value: 'playful', label: 'Juguetón' },
+    { value: 'stoic', label: 'Estoico' },
+    { value: 'passionate', label: 'Apasionado' },
+    { value: 'serene', label: 'Sereno' },
+  ]
+
+  const toggleTag = (tag: EmotionalPaletteTag) => {
+    const current = character.emotionalPalette || []
+    const updated = current.includes(tag)
+      ? current.filter((t) => t !== tag)
+      : [...current, tag]
+    onUpdate({ emotionalPalette: updated })
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Selecciona las emociones que definen la personalidad de tu personaje.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <button
+            key={tag.value}
+            onClick={() => toggleTag(tag.value)}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              character.emotionalPalette?.includes(tag.value)
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+            }`}
+          >
+            {tag.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ReferencesTab({
+  character,
+  onUpdate,
+}: {
+  character: CharacterBible
+  onUpdate: (updates: Partial<CharacterBible>) => void
+}) {
+  const refs = character.references || { hasReferences: false }
+  const updateRefs = (updates: Partial<CharacterReference>) =>
+    onUpdate({ references: { ...refs, ...updates } as CharacterReference })
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Indica si vas a proporcionar referencias visuales para tu personaje. Esto se incluirá en la generación de prompts.
+      </p>
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={refs.hasReferences || false}
+          onChange={(e) => updateRefs({ hasReferences: e.target.checked })}
+          className="rounded border-input"
+        />
+        <span className="text-sm">Voy a proporcionar referencias visuales</span>
+      </label>
+      {refs.hasReferences && (
+        <FieldGroup
+          label="Notas sobre las referencias"
+          value={refs.notes}
+          onChange={(v) => updateRefs({ notes: v })}
+          type="textarea"
+        />
+      )}
+    </div>
+  )
+}
+
 export function CharacterEditor() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -569,6 +680,9 @@ export function CharacterEditor() {
           <TabsTrigger value="appearance">
             <Eye className="mr-1 h-3 w-3" /> Apariencia
           </TabsTrigger>
+          <TabsTrigger value="emotional-palette">
+            <Heart className="mr-1 h-3 w-3" /> Emociones
+          </TabsTrigger>
           <TabsTrigger value="clothing">
             <Shirt className="mr-1 h-3 w-3" /> Ropa
           </TabsTrigger>
@@ -581,6 +695,9 @@ export function CharacterEditor() {
           <TabsTrigger value="visual-personality">
             <Sparkles className="mr-1 h-3 w-3" /> Personalidad Visual
           </TabsTrigger>
+          <TabsTrigger value="references">
+            <Link className="mr-1 h-3 w-3" /> Referencias
+          </TabsTrigger>
         </TabsList>
 
         <ScrollArea className="mt-4 h-[calc(100vh-280px)]">
@@ -589,6 +706,9 @@ export function CharacterEditor() {
           </TabsContent>
           <TabsContent value="appearance">
             <AppearanceTab character={character} onUpdate={handleUpdate} />
+          </TabsContent>
+          <TabsContent value="emotional-palette">
+            <EmotionalPaletteTab character={character} onUpdate={handleUpdate} />
           </TabsContent>
           <TabsContent value="clothing">
             <ClothingTab character={character} onUpdate={handleUpdate} />
@@ -601,6 +721,9 @@ export function CharacterEditor() {
           </TabsContent>
           <TabsContent value="visual-personality">
             <VisualPersonalityTab character={character} onUpdate={handleUpdate} />
+          </TabsContent>
+          <TabsContent value="references">
+            <ReferencesTab character={character} onUpdate={handleUpdate} />
           </TabsContent>
         </ScrollArea>
       </Tabs>

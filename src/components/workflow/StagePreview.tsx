@@ -33,9 +33,11 @@ export function StagePreview() {
   if (!stage) return null
 
   const prompt = generateStagePrompt()
+  const template = engineTemplates.find((t) => t.id === workflow.engineTemplate)
+  const fullPrompt = [template?.prefix, prompt, template?.suffix].filter(Boolean).join('')
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(prompt)
+    await navigator.clipboard.writeText(fullPrompt)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -68,7 +70,7 @@ export function StagePreview() {
       <CardContent className="flex-1 overflow-hidden flex flex-col gap-3">
         <div className="flex-1 rounded-lg border bg-muted/30 p-4">
           <p className="text-sm whitespace-pre-wrap break-words">
-            {prompt || (
+            {fullPrompt || (
               <span className="text-muted-foreground">
                 Tu prompt aparecerá aquí...
               </span>
@@ -82,7 +84,7 @@ export function StagePreview() {
             size="sm"
             className="flex-1"
             onClick={handleCopy}
-            disabled={!prompt}
+            disabled={!fullPrompt}
           >
             {copied ? (
               <Check className="mr-1 h-3 w-3" />
