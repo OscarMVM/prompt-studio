@@ -39,6 +39,7 @@ export const useCharacterStore = create<CharacterStore>((set, get) => ({
       id: character.id,
       characterId: character.id,
       engineTemplate: 'midjourney',
+      characterContext: '',
       stages,
       createdAt: Date.now(),
       updatedAt: Date.now(),
