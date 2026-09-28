@@ -22,7 +22,6 @@ export function StagePreview() {
     generateStagePrompt,
     setNegativePrompt,
     setEngineTemplate,
-    markStageComplete,
   } = useWorkflowStore()
 
   const [copied, setCopied] = useState(false)
@@ -94,16 +93,6 @@ export function StagePreview() {
             {copied ? '¡Copiado!' : 'Copiar'}
           </Button>
           <WorkflowExportDialog />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant={stage.isCompleted ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => markStageComplete(activeStageId, !stage.isCompleted)}
-          >
-            {stage.isCompleted ? 'Completado ✓' : 'Marcar como completado'}
-          </Button>
         </div>
 
         <div className="space-y-2">

@@ -131,14 +131,17 @@ export function WorkflowExportDialog() {
     <Dialog>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
         <Download className="mr-1 h-3 w-3" />
-        Exportar todo
+        Exportar módulos
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Exportar Todos los Prompts</DialogTitle>
+          <DialogTitle>Exportar prompts por módulo</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            La exportación conjunta es opcional e incluye todos los módulos. Cada prompt también puede utilizarse por separado.
+          </p>
           <div className="rounded-lg border bg-muted/30 p-3 max-h-[300px] overflow-y-auto">
             {allPrompts.map((p) => (
               <div key={p.stageId} className="mb-3 last:mb-0">

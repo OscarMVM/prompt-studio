@@ -7,6 +7,7 @@ import { CharacterEditor } from '@/pages/CharacterEditor'
 import { WorkflowPage } from '@/pages/WorkflowPage'
 import { LibraryPage } from '@/pages/LibraryPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { PromptingPage } from '@/pages/PromptingPage'
 import { useCharacterStore } from '@/stores/characterStore'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/characters/:id" element={<CharacterEditor />} />
             <Route path="/characters/:id/workflow" element={<WorkflowPage />} />
             <Route path="/library" element={<LibraryPage />} />
+            <Route path="/prompting" element={<PromptingPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Routes>

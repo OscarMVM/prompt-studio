@@ -21,13 +21,9 @@ export function WorkflowHeader() {
   const character = characters.find((c) => c.id === workflow.characterId)
   const stageDef = STAGE_MAP[activeStageId as StageId]
 
-  const completedCount = workflow.stages.filter((s) => s.isCompleted).length
-  const totalCount = workflow.stages.length
-  const progressPercent = Math.round((completedCount / totalCount) * 100)
-
   return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3 border-b bg-card">
-      <div className="flex items-center gap-2 text-sm">
+    <div className="flex flex-col gap-3 border-b bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-2 text-sm">
         <Link
           to={`/characters/${workflow.characterId}`}
           className="font-medium hover:underline text-primary"
@@ -35,41 +31,28 @@ export function WorkflowHeader() {
           {character?.name || 'Personaje'}
         </Link>
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        <span className="font-medium">{stageDef?.label}</span>
-        <span className="text-muted-foreground">
-          — Etapa {(stageDef?.index ?? 0) + 1} de {totalCount}
-        </span>
+        <span className="truncate font-medium">{stageDef?.label}</span>
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="text-xs text-muted-foreground">
-            {completedCount}/{totalCount} completadas
-          </div>
-          <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full transition-all"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </div>
-
+      <div className="flex flex-wrap gap-2 sm:shrink-0">
         <Button
           variant="outline"
           size="sm"
+          className="flex-1 whitespace-nowrap sm:flex-none"
           onClick={() => autoGenerateStage(activeStageId)}
         >
           <RefreshCw className="mr-1 h-3 w-3" />
-          Regenerar etapa
+          Regenerar módulo
         </Button>
 
         <Button
           variant="outline"
           size="sm"
+          className="flex-1 whitespace-nowrap sm:flex-none"
           onClick={autoGenerateAllStages}
         >
           <Wand2 className="mr-1 h-3 w-3" />
-          Auto desde Biblia
+          Generar módulos desde Biblia
         </Button>
       </div>
     </div>
