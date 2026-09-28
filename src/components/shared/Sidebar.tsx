@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   Home,
   BookOpen,
+  Sparkles,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -19,6 +20,7 @@ import { CharacterCreationDialog } from '@/components/character/CharacterCreatio
 const navItems = [
   { to: '/', icon: Home, label: 'Inicio' },
   { to: '/library', icon: BookOpen, label: 'Biblioteca' },
+  { to: '/prompting', icon: Sparkles, label: 'Guía de prompts' },
 ]
 
 export function Sidebar() {
