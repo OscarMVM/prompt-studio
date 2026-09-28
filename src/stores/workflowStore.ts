@@ -27,7 +27,6 @@ interface WorkflowState {
 
   autoGenerateStage: (stageId: StageId) => Promise<void>
   autoGenerateAllStages: () => Promise<void>
-  markStageComplete: (stageId: StageId, completed: boolean) => void
 
   addBlock: (category: BlockCategory, label: string, value: string) => void
   removeBlock: (blockId: string) => void
@@ -54,6 +53,28 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     set({ isLoading: true })
     const { default: db } = await import('@/lib/db')
     const workflow = await db.workflows.get(characterId)
+    if (workflow) {
+      const stageIndexes = new Map(STAGE_DEFINITIONS.map(({ id, index }) => [id, index]))
+      const stages = workflow.stages
+        .filter((stage) => stageIndexes.has(stage.id))
+        .map((stage) => {
+          const normalizedStage = { ...stage, index: stageIndexes.get(stage.id)! }
+          delete (normalizedStage as WorkflowStage & { isCompleted?: boolean }).isCompleted
+          return normalizedStage
+        })
+      const stagesChanged =
+        stages.length !== workflow.stages.length ||
+        stages.some((stage, index) =>
+          stage.index !== workflow.stages[index].index ||
+          Object.prototype.hasOwnProperty.call(workflow.stages[index], 'isCompleted')
+        )
+
+      if (stagesChanged) {
+        workflow.stages = stages
+        workflow.updatedAt = Date.now()
+        await db.workflows.update(characterId, { stages, updatedAt: workflow.updatedAt })
+      }
+    }
     if (workflow && !workflow.characterContext) {
       const character = await db.characters.get(characterId)
       if (character) {
@@ -64,7 +85,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         workflow.characterContext = ''
       }
     }
-    set({ workflow: workflow ?? null, isLoading: false })
+    const activeStageId = workflow?.stages.some((stage) => stage.id === get().activeStageId)
+      ? get().activeStageId
+      : workflow?.stages[0]?.id ?? 'ideacion'
+    set({ workflow: workflow ?? null, activeStageId, isLoading: false })
   },
 
   createWorkflow: async (character) => {
@@ -148,10 +172,6 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
       }
     })
     await get()._persist()
-  },
-
-  markStageComplete: (stageId, completed) => {
-    get()._updateStage(stageId, { isCompleted: completed })
   },
 
   addBlock: (category, label, value) => {

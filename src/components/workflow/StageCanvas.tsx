@@ -38,12 +38,12 @@ export function StageCanvas() {
         <Separator />
 
         <div className="space-y-1">
-          <Label className="text-xs">Bloques del Estadio</Label>
+          <Label className="text-xs">Parámetros del prompt</Label>
           <ScrollArea className="flex-1">
             <div className="space-y-1">
               {stage.blocks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-24 text-muted-foreground">
-                  <p className="text-xs">No hay bloques. Añade desde el selector o genera automático.</p>
+                  <p className="text-xs">Añade parámetros desde el selector o usa “Regenerar módulo” para completarlos desde la Biblia.</p>
                 </div>
               ) : (
                 stage.blocks.map((block) => (

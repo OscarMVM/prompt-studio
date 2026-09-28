@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useCharacterStore } from '@/stores/characterStore'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { CharacterCreationDialog } from '@/components/character/CharacterCreationDialog'
 
@@ -22,11 +22,18 @@ const navItems = [
 ]
 
 export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => window.matchMedia('(max-width: 767px)').matches)
   const [dialogOpen, setDialogOpen] = useState(false)
   const navigate = useNavigate()
   const { characters, activeCharacterId, setActiveCharacter, deleteCharacter } =
     useCharacterStore()
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)')
+    const updateCollapsed = (event: MediaQueryListEvent) => setCollapsed(event.matches)
+    mediaQuery.addEventListener('change', updateCollapsed)
+    return () => mediaQuery.removeEventListener('change', updateCollapsed)
+  }, [])
 
   return (
     <aside
