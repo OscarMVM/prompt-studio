@@ -43,7 +43,7 @@ export function StageCanvas() {
             <div className="space-y-1">
               {stage.blocks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-24 text-muted-foreground">
-                  <p className="text-xs">Añade parámetros desde el selector o usa “Regenerar módulo” para completarlos desde la Biblia.</p>
+                  <p className="text-xs">Añade parámetros desde el selector o resetea el módulo para restaurar los datos de la Biblia del personaje.</p>
                 </div>
               ) : (
                 stage.blocks.map((block) => (

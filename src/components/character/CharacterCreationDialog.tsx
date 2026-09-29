@@ -9,10 +9,11 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { CharacterField as FieldGroup } from './CharacterField'
+import { CharacterOption } from './CharacterOption'
+import { emotionalOptionDescriptions, visualOptionDescriptions } from './characterOptionDescriptions'
 import { useCharacterStore } from '@/stores/characterStore'
 import type {
   CharacterBible,
@@ -96,37 +97,6 @@ const VISUAL_TAGS: { value: VisualPersonalityTag; label: string }[] = [
   { value: 'ornate', label: 'Ornamentado' },
 ]
 
-function FieldGroup({
-  label,
-  value,
-  onChange,
-  type = 'input',
-}: {
-  label: string
-  value?: string
-  onChange: (val: string) => void
-  type?: 'input' | 'textarea'
-}) {
-  return (
-    <div className="space-y-1.5">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      {type === 'textarea' ? (
-        <Textarea
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="min-h-[72px] text-sm"
-        />
-      ) : (
-        <Input
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="text-sm"
-        />
-      )}
-    </div>
-  )
-}
-
 function StepGeneral({
   data,
   onUpdate,
@@ -156,34 +126,14 @@ function StepGeneral({
         onChange={(v) => updateGeneral({ age: v })}
       />
       <FieldGroup
-        label="Sexo"
-        value={g.sex}
-        onChange={(v) => updateGeneral({ sex: v })}
-      />
-      <FieldGroup
         label="Especie"
         value={g.species}
         onChange={(v) => updateGeneral({ species: v })}
       />
       <FieldGroup
-        label="Raza"
-        value={g.race}
-        onChange={(v) => updateGeneral({ race: v })}
-      />
-      <FieldGroup
-        label="Clase"
-        value={g.class}
-        onChange={(v) => updateGeneral({ class: v })}
-      />
-      <FieldGroup
         label="Profesión"
         value={g.profession}
         onChange={(v) => updateGeneral({ profession: v })}
-      />
-      <FieldGroup
-        label="Rol"
-        value={g.role}
-        onChange={(v) => updateGeneral({ role: v })}
       />
       <FieldGroup
         label="Altura"
@@ -382,17 +332,13 @@ function StepEmotions({
         </p>
         <div className="flex flex-wrap gap-2">
           {EMOTIONAL_TAGS.map((tag) => (
-            <button
+            <CharacterOption
               key={tag.value}
-              onClick={() => toggleEmotion(tag.value)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                data.emotionalPalette?.includes(tag.value)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-              }`}
-            >
-              {tag.label}
-            </button>
+              label={tag.label}
+              description={emotionalOptionDescriptions[tag.value]}
+              selected={data.emotionalPalette?.includes(tag.value) ?? false}
+              onToggle={() => toggleEmotion(tag.value)}
+            />
           ))}
         </div>
       </div>
@@ -403,17 +349,13 @@ function StepEmotions({
         </p>
         <div className="flex flex-wrap gap-2">
           {VISUAL_TAGS.map((tag) => (
-            <button
+            <CharacterOption
               key={tag.value}
-              onClick={() => toggleVisual(tag.value)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                data.visualPersonality?.includes(tag.value)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-              }`}
-            >
-              {tag.label}
-            </button>
+              label={tag.label}
+              description={visualOptionDescriptions[tag.value]}
+              selected={data.visualPersonality?.includes(tag.value) ?? false}
+              onToggle={() => toggleVisual(tag.value)}
+            />
           ))}
         </div>
       </div>
@@ -528,15 +470,18 @@ function StepColors({
           Indica si vas a proporcionar referencias visuales para tu personaje (imágenes de Pinterest, Artstation, capturas, etc.).
         </p>
         <div className="space-y-3">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={refs?.hasReferences || false}
-              onChange={(e) => updateRefs({ hasReferences: e.target.checked })}
-              className="rounded border-input"
-            />
-            <span className="text-sm">Voy a proporcionar referencias visuales</span>
-          </label>
+          <Tooltip>
+            <TooltipTrigger render={<label className="flex items-center gap-2 cursor-pointer" />}>
+              <input
+                type="checkbox"
+                checked={refs?.hasReferences || false}
+                onChange={(e) => updateRefs({ hasReferences: e.target.checked })}
+                className="rounded border-input"
+              />
+              <span className="text-sm">Voy a proporcionar referencias visuales</span>
+            </TooltipTrigger>
+            <TooltipContent>Activa esta opción si adjuntarás imágenes para orientar el diseño del personaje.</TooltipContent>
+          </Tooltip>
           {refs?.hasReferences && (
             <FieldGroup
               label="Notas sobre las referencias"
@@ -559,12 +504,8 @@ function StepSummary({ data }: { data: WizardData }) {
         { label: 'Nombre', value: data.name || data.general.name },
         { label: 'Alias', value: data.alias },
         { label: 'Edad', value: data.general.age },
-        { label: 'Sexo', value: data.general.sex },
         { label: 'Especie', value: data.general.species },
-        { label: 'Raza', value: data.general.race },
-        { label: 'Clase', value: data.general.class },
         { label: 'Profesión', value: data.general.profession },
-        { label: 'Rol', value: data.general.role },
         { label: 'Personalidad', value: data.general.personality },
       ],
     },

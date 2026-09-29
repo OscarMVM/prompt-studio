@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dialog'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useCharacterStore } from '@/stores/characterStore'
-import { engineTemplates } from '@/data/templates'
 
 export function WorkflowExportDialog() {
   const [copied, setCopied] = useState(false)
@@ -20,11 +19,7 @@ export function WorkflowExportDialog() {
   if (!workflow) return null
 
   const character = characters.find((c) => c.id === workflow.characterId)
-  const template = engineTemplates.find((t) => t.id === workflow.engineTemplate)
-  const allPrompts = generateAllPrompts().map((p) => ({
-    ...p,
-    prompt: [template?.prefix, p.prompt, template?.suffix].filter(Boolean).join(''),
-  }))
+  const allPrompts = generateAllPrompts()
 
   const handleCopyAll = async () => {
     const text = allPrompts
@@ -50,7 +45,6 @@ export function WorkflowExportDialog() {
           }
         : null,
       workflow: {
-        engine: template?.name || workflow.engineTemplate,
         stages: allPrompts.map((p) => ({
           id: p.stageId,
           label: p.label,
@@ -78,7 +72,6 @@ export function WorkflowExportDialog() {
       lines.push(`## Personaje: ${character.name}`)
       lines.push('')
     }
-    lines.push(`**Motor:** ${template?.name || workflow.engineTemplate}`)
     lines.push(`**Exportado:** ${new Date().toLocaleString()}`)
     lines.push('')
 
