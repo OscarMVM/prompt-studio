@@ -4,15 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useWorkflowStore } from '@/stores/workflowStore'
-import { engineTemplates } from '@/data/templates'
 import { WorkflowExportDialog } from './WorkflowExportDialog'
 
 export function StagePreview() {
@@ -21,7 +13,6 @@ export function StagePreview() {
     activeStageId,
     generateStagePrompt,
     setNegativePrompt,
-    setEngineTemplate,
   } = useWorkflowStore()
 
   const [copied, setCopied] = useState(false)
@@ -32,8 +23,7 @@ export function StagePreview() {
   if (!stage) return null
 
   const prompt = generateStagePrompt()
-  const template = engineTemplates.find((t) => t.id === workflow.engineTemplate)
-  const fullPrompt = [template?.prefix, prompt, template?.suffix].filter(Boolean).join('')
+  const fullPrompt = prompt
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(fullPrompt)
@@ -46,24 +36,6 @@ export function StagePreview() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base">Vista Previa</CardTitle>
-          <Select
-            value={workflow.engineTemplate}
-            onValueChange={(v) => {
-              if (v) setEngineTemplate(v)
-            }}
-            items={engineTemplates.map((t) => ({ value: t.id, label: t.name }))}
-          >
-            <SelectTrigger className="w-[140px] h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {engineTemplates.map((t) => (
-                <SelectItem key={t.id} value={t.id}>
-                  {t.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden flex flex-col gap-3">

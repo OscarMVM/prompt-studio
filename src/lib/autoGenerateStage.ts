@@ -13,11 +13,8 @@ export function buildCharacterContext(character: CharacterBible): string {
   if (character.name) parts.push(character.name)
 
   const identity = [
-    g.sex,
     g.species,
-    g.race,
-    g.profession || g.role,
-    g.class,
+    g.profession,
   ].filter(Boolean).join(' ')
   if (identity) parts.push(identity)
 
@@ -109,12 +106,58 @@ export function autoPopulateAllStages(
 export function generateStagePrompt(
   blocks: PromptBlock[],
   customText: string,
-  characterContext?: string
+  characterContext: string,
+  stageId: StageId
 ): string {
   const enabled = blocks
     .filter((b) => b.enabled)
     .sort((a, b) => a.order - b.order)
 
   const blockText = enabled.map((b) => b.value).join(', ')
-  return [characterContext, blockText, customText].filter(Boolean).join(', ')
+  const context = [characterContext, blockText, customText].filter(Boolean).join(', ')
+  const instructions: Record<StageId, { objective: string; format: string; limits: string }> = {
+    ideacion: {
+      objective: 'Define el concepto visual y la dirección creativa del personaje.',
+      format: 'Describe identidad, personalidad y atmósfera en una propuesta visual clara.',
+      limits: 'Conserva los rasgos establecidos del personaje y evita añadir detalles contradictorios.',
+    },
+    sketch: {
+      objective: 'Establece la estructura inicial del personaje mediante un boceto y lineart.',
+      format: 'Prioriza silueta, proporciones, rasgos distintivos y líneas legibles.',
+      limits: 'Mantén el acabado de boceto; no lo conviertas en una ilustración final renderizada.',
+    },
+    turnaround: {
+      objective: 'Muestra el mismo diseño del personaje desde varios ángulos.',
+      format: 'Organiza vistas frontal, lateral, trasera y tres cuartos como una hoja de referencia.',
+      limits: 'Mantén constantes proporciones, vestuario, colores y accesorios entre las vistas.',
+    },
+    color: {
+      objective: 'Define y aplica una paleta de color coherente para el personaje.',
+      format: 'Distingue colores principales, secundarios y de acento, mostrando su relación.',
+      limits: 'Respeta los colores indicados y conserva la legibilidad del diseño.',
+    },
+    expresiones: {
+      objective: 'Explora el rostro y las expresiones del personaje.',
+      format: 'Haz visibles los rasgos faciales y comunica con claridad la emoción solicitada.',
+      limits: 'Conserva la identidad facial y evita cambiar edad, especie o rasgos distintivos.',
+    },
+    poses: {
+      objective: 'Representa una acción y una pose que expresen el lenguaje corporal del personaje.',
+      format: 'Muestra el cuerpo completo con una postura legible y una silueta clara.',
+      limits: 'Respeta la anatomía, el equipo y las características ya definidas.',
+    },
+    'render-final': {
+      objective: 'Crear una ilustración final pulida que reúna el diseño del personaje.',
+      format: 'Integra apariencia, vestuario, equipo, pose, iluminación y composición en una imagen coherente.',
+      limits: 'Conserva los detalles establecidos y evita añadir elementos que compitan con el personaje.',
+    },
+  }
+  const instruction = instructions[stageId]
+
+  return [
+    `Objetivo: ${instruction.objective}`,
+    `Contexto: ${context || 'No hay detalles adicionales del personaje.'}`,
+    `Formato: ${instruction.format}`,
+    `Límites: ${instruction.limits}`,
+  ].join('\n\n')
 }

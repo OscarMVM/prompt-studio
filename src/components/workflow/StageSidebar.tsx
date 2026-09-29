@@ -38,10 +38,8 @@ export function StageSidebar() {
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-1">
           {STAGE_DEFINITIONS.map((def) => {
-            const stage = workflow.stages.find((s) => s.id === def.id)
             const Icon = iconMap[def.icon] || Lightbulb
             const isActive = activeStageId === def.id
-            const hasBlocks = stage && stage.blocks.length > 0
             return (
               <button
                 key={def.id}
@@ -57,11 +55,6 @@ export function StageSidebar() {
                 <Icon className="h-3.5 w-3.5 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{def.label}</div>
-                  {hasBlocks && (
-                    <div className={cn('text-[10px]', isActive ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
-                      {stage!.blocks.length} bloque{stage!.blocks.length !== 1 ? 's' : ''}
-                    </div>
-                  )}
                 </div>
               </button>
             )

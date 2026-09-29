@@ -2,9 +2,11 @@ import { useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { CharacterField as FieldGroup } from '@/components/character/CharacterField'
+import { CharacterOption } from '@/components/character/CharacterOption'
+import { emotionalOptionDescriptions, visualOptionDescriptions } from '@/components/character/characterOptionDescriptions'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useAutoSave } from '@/hooks/useAutoSave'
 import type { CharacterBible, VisualPersonalityTag, EmotionalPaletteTag, CharacterReference } from '@/types/character'
@@ -18,37 +20,6 @@ import {
   Heart,
   Link,
 } from 'lucide-react'
-
-function FieldGroup({
-  label,
-  value,
-  onChange,
-  type = 'input',
-}: {
-  label: string
-  value?: string
-  onChange: (val: string) => void
-  type?: 'input' | 'textarea'
-}) {
-  return (
-    <div className="space-y-1.5">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      {type === 'textarea' ? (
-        <Textarea
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="min-h-[80px] text-sm"
-        />
-      ) : (
-        <Input
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="text-sm"
-        />
-      )}
-    </div>
-  )
-}
 
 function GeneralTab({
   character,
@@ -75,34 +46,14 @@ function GeneralTab({
         onChange={(v) => onUpdate({ general: { ...character.general, age: v } })}
       />
       <FieldGroup
-        label="Sexo"
-        value={character.general.sex}
-        onChange={(v) => onUpdate({ general: { ...character.general, sex: v } })}
-      />
-      <FieldGroup
         label="Especie"
         value={character.general.species}
         onChange={(v) => onUpdate({ general: { ...character.general, species: v } })}
       />
       <FieldGroup
-        label="Raza"
-        value={character.general.race}
-        onChange={(v) => onUpdate({ general: { ...character.general, race: v } })}
-      />
-      <FieldGroup
-        label="Clase"
-        value={character.general.class}
-        onChange={(v) => onUpdate({ general: { ...character.general, class: v } })}
-      />
-      <FieldGroup
         label="Profesión"
         value={character.general.profession}
         onChange={(v) => onUpdate({ general: { ...character.general, profession: v } })}
-      />
-      <FieldGroup
-        label="Rol"
-        value={character.general.role}
-        onChange={(v) => onUpdate({ general: { ...character.general, role: v } })}
       />
       <FieldGroup
         label="Altura"
@@ -513,17 +464,13 @@ function VisualPersonalityTab({
         </p>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <button
+          <CharacterOption
             key={tag.value}
-            onClick={() => toggleTag(tag.value)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              character.visualPersonality?.includes(tag.value)
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            {tag.label}
-          </button>
+            label={tag.label}
+            description={visualOptionDescriptions[tag.value]}
+            selected={character.visualPersonality?.includes(tag.value) ?? false}
+            onToggle={() => toggleTag(tag.value)}
+          />
         ))}
       </div>
     </div>
@@ -567,17 +514,13 @@ function EmotionalPaletteTab({
       </p>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <button
+          <CharacterOption
             key={tag.value}
-            onClick={() => toggleTag(tag.value)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              character.emotionalPalette?.includes(tag.value)
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            {tag.label}
-          </button>
+            label={tag.label}
+            description={emotionalOptionDescriptions[tag.value]}
+            selected={character.emotionalPalette?.includes(tag.value) ?? false}
+            onToggle={() => toggleTag(tag.value)}
+          />
         ))}
       </div>
     </div>
@@ -600,15 +543,18 @@ function ReferencesTab({
       <p className="text-sm text-muted-foreground">
         Indica si vas a proporcionar referencias visuales para tu personaje. Esto se incluirá en la generación de prompts.
       </p>
-      <label className="flex items-center gap-2 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={refs.hasReferences || false}
-          onChange={(e) => updateRefs({ hasReferences: e.target.checked })}
-          className="rounded border-input"
-        />
-        <span className="text-sm">Voy a proporcionar referencias visuales</span>
-      </label>
+      <Tooltip>
+        <TooltipTrigger render={<label className="flex items-center gap-2 cursor-pointer" />}>
+          <input
+            type="checkbox"
+            checked={refs.hasReferences || false}
+            onChange={(e) => updateRefs({ hasReferences: e.target.checked })}
+            className="rounded border-input"
+          />
+          <span className="text-sm">Voy a proporcionar referencias visuales</span>
+        </TooltipTrigger>
+        <TooltipContent>Activa esta opción si adjuntarás imágenes para orientar el diseño del personaje.</TooltipContent>
+      </Tooltip>
       {refs.hasReferences && (
         <FieldGroup
           label="Notas sobre las referencias"

@@ -68,7 +68,6 @@ export const STAGE_IDS = STAGE_DEFINITIONS.map((s) => s.id)
 export const STAGE_EXTRACTION_RULES: StageExtractionRule[] = [
   // Ideación
   { stageId: 'ideacion', category: 'mood', label: 'Personalidad', fieldPath: 'general.personality' },
-  { stageId: 'ideacion', category: 'mood', label: 'Rol', fieldPath: 'general.role' },
   { stageId: 'ideacion', category: 'mood', label: 'Profesión', fieldPath: 'general.profession' },
   { stageId: 'ideacion', category: 'mood', label: 'Motivaciones', fieldPath: 'general.motivations' },
   { stageId: 'ideacion', category: 'mood', label: 'Alineación', fieldPath: 'general.alignment' },
@@ -122,7 +121,6 @@ export const STAGE_EXTRACTION_RULES: StageExtractionRule[] = [
 
   // Render Final
   { stageId: 'render-final', category: 'quality', label: 'Profesión', fieldPath: 'general.profession' },
-  { stageId: 'render-final', category: 'quality', label: 'Rol', fieldPath: 'general.role' },
   { stageId: 'render-final', category: 'quality', label: 'Especie', fieldPath: 'general.species' },
   { stageId: 'render-final', category: 'quality', label: 'Cabello', fieldPath: 'appearance.hair.style' },
   { stageId: 'render-final', category: 'quality', label: 'Color de Cabello', fieldPath: 'appearance.hair.color' },

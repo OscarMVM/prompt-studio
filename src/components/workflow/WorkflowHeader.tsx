@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Wand2, RefreshCw, ChevronRight } from 'lucide-react'
+import { Wand2, RefreshCw, ChevronRight, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useCharacterStore } from '@/stores/characterStore'
@@ -11,7 +11,7 @@ export function WorkflowHeader() {
     workflow,
     activeStageId,
     autoGenerateAllStages,
-    autoGenerateStage,
+    resetStage,
   } = useWorkflowStore()
 
   const { characters } = useCharacterStore()
@@ -32,6 +32,15 @@ export function WorkflowHeader() {
         </Link>
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
         <span className="truncate font-medium">{stageDef?.label}</span>
+        <Button
+          variant="outline"
+          size="sm"
+          className="ml-2 shrink-0"
+          render={<Link to={`/characters/${workflow.characterId}`} />}
+        >
+          <Pencil className="mr-1 h-3 w-3" />
+          Editar
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-2 sm:shrink-0">
@@ -39,10 +48,10 @@ export function WorkflowHeader() {
           variant="outline"
           size="sm"
           className="flex-1 whitespace-nowrap sm:flex-none"
-          onClick={() => autoGenerateStage(activeStageId)}
+          onClick={() => resetStage(activeStageId)}
         >
           <RefreshCw className="mr-1 h-3 w-3" />
-          Regenerar módulo
+          Resetear módulo
         </Button>
 
         <Button
