@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import {
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
-  Check,
-  Clipboard,
+  AudioLines,
   Compass,
+  Image,
   FileText,
   Flag,
   Layers3,
@@ -16,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 
 const chapters = [
+  { id: 'fundamentos', label: 'Fundamentos', icon: MessageSquareText },
   { id: 'anatomia', label: 'Anatomía', icon: Layers3 },
   { id: 'comparar', label: 'Comparar', icon: Target },
   { id: 'iterar', label: 'Iterar', icon: RotateCcw },
@@ -48,85 +50,64 @@ const anatomy = [
     key: 'goal',
     number: '01',
     label: 'Objetivo',
-    hint: '¿Qué resultado necesitas?',
+    hint: '¿Qué tarea y resultado esperas?',
     icon: Target,
     color: 'coral',
-    placeholder: 'Convierte estas notas en un resumen...',
+    example: 'Resume las notas del lanzamiento en tres ideas clave.',
+    explanation: 'Empieza con una acción y define el resultado. Una instrucción concreta reduce la ambigüedad sin necesidad de hacerla larga.',
   },
   {
     key: 'context',
     number: '02',
     label: 'Contexto',
-    hint: '¿Qué información cambiaría la respuesta?',
+    hint: '¿Quién lo usará y qué necesita saber?',
     icon: Compass,
     color: 'blue',
-    placeholder: 'La audiencia es el equipo del proyecto...',
+    example: 'Lo leerá el equipo directivo antes de la revisión semanal.',
+    explanation: 'Incluye antecedentes y audiencia que cambien la respuesta. Omite los datos que no influyen en esta tarea.',
   },
   {
     key: 'output',
     number: '03',
     label: 'Formato',
-    hint: '¿Cómo vas a usar el resultado?',
+    hint: '¿En qué forma te sirve la respuesta?',
     icon: FileText,
     color: 'yellow',
-    placeholder: 'Una página; decisiones y próximos pasos primero...',
+    example: 'Devuelve tres apartados: Decisiones, Riesgos y Próximos pasos.',
+    explanation: 'El formato esperado hace que la respuesta sea más fácil de revisar, compartir o llevar a otra herramienta.',
   },
   {
     key: 'limits',
     number: '04',
     label: 'Límites',
-    hint: '¿Qué debe respetar o evitar?',
+    hint: '¿Qué debe respetar o cómo debe actuar?',
     icon: Flag,
     color: 'green',
-    placeholder: 'No cambies cifras aprobadas; señala lo que falte...',
+    example: 'No deduzcas acuerdos, fechas ni responsables; señala lo que no aparezca en las notas.',
+    explanation: 'Formula límites que se puedan comprobar. Si indicas qué evitar, aclara también qué hacer en su lugar.',
   },
 ]
 
 export function PromptingPage() {
-  const [values, setValues] = useState<Record<string, string>>({
-    goal: '',
-    context: '',
-    output: '',
-    limits: '',
-  })
+  const [activeStep, setActiveStep] = useState(0)
   const [selectedExample, setSelectedExample] = useState(0)
-  const [copied, setCopied] = useState(false)
-
-  const prompt = anatomy
-    .map(({ key, label }) => values[key].trim() ? `${label}: ${values[key].trim()}` : '')
-    .filter(Boolean)
-    .join('\n\n')
-
-  const copyPrompt = async () => {
-    if (!prompt) return
-    await navigator.clipboard.writeText(prompt)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1800)
-  }
-
-  const clearPrompt = () => {
-    setValues({ goal: '', context: '', output: '', limits: '' })
-    setCopied(false)
-  }
-
+  const currentStep = anatomy[activeStep]
+  const completedSteps = anatomy.slice(0, activeStep + 1)
   const example = examples[selectedExample]
 
   return (
     <div className="prompt-guide">
       <header className="guide-cover" id="inicio">
         <div className="guide-cover-copy">
-          <div className="guide-kicker"><Sparkles size={14} /> CUADERNO ABIERTO · PROMPTING</div>
-          <h1>Una buena idea<br /><span>merece una buena</span><br />instrucción.</h1>
+          <h1>Pide con claridad.<br /><span>Ajusta sobre la marcha.</span></h1>
           <p className="guide-cover-lede">
-            Aprende a pedir lo que necesitas, con claridad y sin fórmulas rígidas. Un prompt es el comienzo de una conversación, no un comando perfecto.
+            Empieza con una tarea sencilla. Añade contexto, formato o límites cuando ayuden a obtener una respuesta útil; luego revisa y afina.
           </p>
           <a className="guide-cover-link" href="#anatomia">
             Explorar la anatomía <ArrowDown size={16} />
           </a>
-          <div className="guide-cover-footnote">CONCEPTOS TRANSFERIBLES · SINTAXIS SEGÚN LA HERRAMIENTA</div>
         </div>
         <div className="guide-cover-art" aria-label="Diagrama visual de las partes de una instrucción" role="img">
-          <div className="guide-art-topline"><span>UN PROMPT, EN CAPAS</span><span>FIG. 01</span></div>
           <div className="guide-art-orbit orbit-one" />
           <div className="guide-art-orbit orbit-two" />
           <div className="guide-art-center"><MessageSquareText size={25} /><span>RESULTADO<br />QUE BUSCAS</span></div>
@@ -139,75 +120,103 @@ export function PromptingPage() {
       </header>
 
       <nav className="guide-toc" aria-label="Secciones de la guía">
-        <span className="guide-toc-title">EXPLORAR</span>
-        {chapters.map(({ id, label, icon: Icon }, index) => (
-          <a href={`#${id}`} key={id}><Icon size={15} /><span>{label}</span><small>0{index + 1}</small></a>
+        {chapters.map(({ id, label, icon: Icon }) => (
+          <a href={`#${id}`} key={id}><Icon size={15} /><span>{label}</span></a>
         ))}
-        <span className="guide-toc-source">BASADO EN LA GUÍA DE OPENAI</span>
       </nav>
+
+      <section className="guide-foundations" id="fundamentos">
+        <div className="guide-foundations-heading">
+            <h2>¿Qué hace claro un <em>prompt?</em></h2>
+            <p>Plantea una tarea y, si hace falta, suma contexto, material de entrada y una forma esperada para la respuesta. No todos los encargos necesitan cada elemento.</p>
+        </div>
+        <div className="foundation-visuals">
+          <article className="foundation-card foundation-text">
+            <MessageSquareText size={22} />
+            <h3>Una instrucción directa</h3>
+            <p>Un verbo concreto marca la tarea: resumir, comparar, traducir, ordenar o explicar.</p>
+            <div className="foundation-example">“Resume estas notas en tres ideas.”</div>
+          </article>
+          <article className="foundation-card foundation-image">
+            <Image size={22} />
+            <h3>Contexto visual</h3>
+            <p>Adjunta una imagen si es parte de la tarea y señala qué necesitas observar, comparar o transformar.</p>
+            <div className="foundation-image-mark"><span /><span /><span /></div>
+          </article>
+          <article className="foundation-card foundation-audio">
+            <AudioLines size={22} />
+            <h3>Audio como material</h3>
+            <p>Incluye una grabación cuando quieras transcribirla, resumirla o trabajar con lo que se dijo.</p>
+            <div className="audio-wave" aria-hidden="true">▂ ▄ ▆ ▃ ▇ ▅ ▂ ▄ ▆ ▇ ▃ ▅ ▂ ▄ ▆ ▃ ▇ ▅ ▂</div>
+          </article>
+        </div>
+        <div className="prompt-engineering-note">
+          <p>Diseñar un prompt es un proceso iterativo: empieza simple, observa la respuesta y añade solo lo que falta.</p>
+          <span className="engineering-mark"><Sparkles size={18} /></span>
+        </div>
+      </section>
 
       <section className="guide-section anatomy-section" id="anatomia">
         <div className="guide-section-heading">
-          <div className="guide-section-index">A / ESTRUCTURA FLEXIBLE</div>
           <div>
-            <h2>Cuatro piezas.<br /><em>Solo las que hagan falta.</em></h2>
-            <p>Empieza por el resultado. Añade contexto, formato o límites cuando ayuden a que la respuesta sea más útil.</p>
+            <h2>Cuatro piezas.<br /><em>Úsalas si aportan.</em></h2>
+            <p>Define la tarea. Añade contexto para orientar, un formato para usar la respuesta y límites cuando haya algo que respetar.</p>
           </div>
         </div>
 
         <div className="anatomy-workbench">
-          <div className="anatomy-inputs">
-            {anatomy.map(({ key, number, label, hint, icon: Icon, color, placeholder }) => (
-              <label className={`anatomy-field field-${color}`} key={key}>
-                <span className="anatomy-field-head">
-                  <span className="anatomy-field-number">{number}</span>
-                  <Icon size={17} />
-                  <strong>{label}</strong>
-                </span>
-                <span className="anatomy-field-hint">{hint}</span>
-                <textarea
-                  value={values[key]}
-                  onChange={(event) => setValues((current) => ({ ...current, [key]: event.target.value }))}
-                  placeholder={placeholder}
-                  rows={2}
-                />
-              </label>
-            ))}
-            <p className="anatomy-footnote"><span>*</span> No hace falta llenar todos los campos. Una petición breve puede ser suficiente.</p>
-          </div>
-
-          <aside className="prompt-output" aria-live="polite">
-            <div className="prompt-output-bar"><span><i /> VISTA DE TU PROMPT</span><span>EN VIVO</span></div>
-            <div className="prompt-output-body">
-              {prompt ? (
-                <pre>{prompt}</pre>
-              ) : (
-                <div className="prompt-output-empty">
-                  <div className="empty-brackets">[ &nbsp; ]</div>
-                  <p>Tu instrucción toma forma aquí.</p>
-                  <span>Escribe en una o más piezas para empezar.</span>
+          <div className="anatomy-steps">
+            <div className="anatomy-step-live" aria-live="polite" aria-atomic="true">
+              <article className={`anatomy-step field-${currentStep.color}`} key={currentStep.key}>
+                <div className="anatomy-step-progress">PIEZA {currentStep.number} DE 04</div>
+                <div className="anatomy-step-head">
+                  <span className="anatomy-field-number">{currentStep.number}</span>
+                  <currentStep.icon size={17} />
+                  <strong>{currentStep.label}</strong>
                 </div>
+                <p className="anatomy-field-hint">{currentStep.hint}</p>
+                <p className="anatomy-step-example">“{currentStep.example}”</p>
+                <p className="anatomy-step-explanation">{currentStep.explanation}</p>
+              </article>
+            </div>
+            <div className="anatomy-navigation" aria-label="Navegación entre piezas">
+              <Button variant="outline" size="sm" onClick={() => setActiveStep((step) => Math.max(0, step - 1))} disabled={activeStep === 0}>
+                <ArrowLeft size={15} /> Anterior
+              </Button>
+              {activeStep < anatomy.length - 1 ? (
+                <Button size="sm" onClick={() => setActiveStep((step) => Math.min(anatomy.length - 1, step + 1))}>
+                  Siguiente: {anatomy[activeStep + 1].label} <ArrowRight size={15} />
+                </Button>
+              ) : (
+                <Button variant="outline" size="sm" onClick={() => setActiveStep(0)}>
+                  <RotateCcw size={15} /> Reiniciar
+                </Button>
               )}
             </div>
-            <div className="prompt-output-actions">
-              <Button variant="outline" size="sm" onClick={clearPrompt} disabled={!prompt} aria-label="Limpiar prompt">
-                <RotateCcw size={15} /> Limpiar
-              </Button>
-              <Button size="sm" onClick={copyPrompt} disabled={!prompt}>
-                {copied ? <Check size={15} /> : <Clipboard size={15} />}
-                {copied ? 'Copiado' : 'Copiar prompt'}
-              </Button>
+            <p className="anatomy-footnote"><span>*</span> Puedes empezar solo con una instrucción y completar lo que falte.</p>
+          </div>
+
+          <aside className="prompt-output" aria-label="Ejemplo de prompt en construcción">
+            <div className="prompt-output-bar"><span><i /> EJEMPLO EN CONSTRUCCIÓN</span><span>{String(completedSteps.length).padStart(2, '0')} / 04</span></div>
+            <div className="prompt-output-body">
+              <div className="prompt-output-pieces" aria-live="polite" aria-relevant="additions removals">
+                {completedSteps.map(({ key, label, color, example }) => (
+                  <p className={`prompt-output-piece field-${color}`} key={key}>
+                    <strong>{label}</strong>{example}
+                  </p>
+                ))}
+              </div>
             </div>
+            <p className="prompt-output-note">Cada pieza es opcional: añade una solo si cambia qué sería una buena respuesta.</p>
           </aside>
         </div>
       </section>
 
       <section className="guide-section compare-section" id="comparar">
         <div className="guide-section-heading compare-heading">
-          <div className="guide-section-index">B / MÁS SEÑAL, MENOS ADIVINANZA</div>
           <div>
-            <h2>La diferencia está<br /><em>en lo que importa.</em></h2>
-            <p>Una petición no necesita ser larga. Necesita incluir los detalles que cambian la respuesta.</p>
+            <h2>De una petición abierta<br /><em>a un encargo claro.</em></h2>
+            <p>La especificidad no es añadir más palabras: es incluir la tarea y los detalles que definen una respuesta útil.</p>
           </div>
         </div>
         <div className="example-switcher" role="group" aria-label="Elige un ejemplo por tipo de tarea">
@@ -226,7 +235,7 @@ export function PromptingPage() {
           <article className="example-side example-vague">
             <div className="example-label"><span>ANTES</span><span>ABIERTO</span></div>
             <p>“{example.vague}”</p>
-            <div className="example-bottom"><span className="example-dot" /> El objetivo todavía deja muchas interpretaciones.</div>
+            <div className="example-bottom"><span className="example-dot" /> Faltan la tarea concreta y el resultado esperado.</div>
           </article>
           <div className="example-arrow"><ArrowRight size={20} /></div>
           <article className="example-side example-clear">
@@ -239,51 +248,82 @@ export function PromptingPage() {
 
       <section className="guide-section iterate-section" id="iterar">
         <div className="iterate-title">
-          <div className="guide-section-index">C / LA CONVERSACIÓN SIGUE</div>
-          <h2>El primer intento<br />no es <em>el final.</em></h2>
-          <p>Revisa la respuesta y pide el cambio concreto que necesitas. Puedes añadir una fuente, corregir el rumbo o cambiar el nivel de detalle sin empezar de cero.</p>
+          <h2>Prueba. Observa.<br /><em>Ajusta.</em></h2>
+          <p>La primera respuesta muestra qué falta. Cambia una instrucción o un dato concreto y compara el resultado antes de añadir más detalles.</p>
         </div>
         <div className="iteration-track" aria-label="Ciclo de mejora del prompt">
           <div className="iteration-line" />
           <article className="iteration-step step-ask">
             <span className="iteration-number">01</span>
             <div className="iteration-icon"><MessageSquareText size={19} /></div>
-            <h3>Pide</h3>
-            <p>Describe el resultado que buscas.</p>
+            <h3>Define</h3>
+            <p>Indica una tarea y el resultado que buscas.</p>
             <div className="iteration-bubble">“Prepara un resumen para el equipo.”</div>
           </article>
           <article className="iteration-step step-review">
             <span className="iteration-number">02</span>
             <div className="iteration-icon"><Compass size={19} /></div>
-            <h3>Revisa</h3>
-            <p>Detecta qué falta o qué sobra.</p>
+            <h3>Compara</h3>
+            <p>Busca la diferencia con lo que esperabas.</p>
             <div className="iteration-bubble">¿Faltan responsables y fechas?</div>
           </article>
           <article className="iteration-step step-steer">
             <span className="iteration-number">03</span>
             <div className="iteration-icon"><RotateCcw size={19} /></div>
             <h3>Ajusta</h3>
-            <p>Da una indicación puntual.</p>
-            <div className="iteration-bubble">“Añade responsables y fechas límite.”</div>
+            <p>Añade el dato o criterio que faltó.</p>
+            <div className="iteration-bubble">“Incluye responsables y fechas si aparecen en las notas.”</div>
+          </article>
+        </div>
+      </section>
+
+      <section className="guide-best-practices" aria-labelledby="best-practices-title">
+        <h2 id="best-practices-title">Sé directo.<br /><em>Define qué es útil<br className="tone-title-break" /> para ti.</em></h2>
+        <div className="best-practice-grid">
+          <article className="best-practice-card clarity-card">
+            <span className="best-practice-number">01</span>
+            <h3>Especifica la tarea</h3>
+            <p>Usa una acción concreta y criterios observables. Añade el contexto necesario para distinguir una respuesta útil de una genérica.</p>
+            <div className="clarity-visual"><span>“Hazlo mejor”</span><ArrowRight size={17} /><strong>“Reduce el texto a 3 frases y conserva los datos.”</strong></div>
+          </article>
+          <article className="best-practice-card tone-card">
+            <span className="best-practice-number">02</span>
+            <h3>Orienta el tono</h3>
+            <p>Indica la voz según quién leerá el resultado y dónde se usará. Elige una descripción que ayude a reconocer el estilo.</p>
+            <div className="tone-swatches" aria-label="Ejemplos de tonos">
+              <span>Profesional</span><span>Amigable</span><span>Humorístico</span><span>Serio</span>
+            </div>
+            <blockquote>“Explícalo con un tono cordial y directo para alguien que recién empieza.”</blockquote>
           </article>
         </div>
       </section>
 
       <section className="guide-practice" id="practica">
-        <div className="practice-stamp"><Sparkles size={20} /><span>EN RESUMEN</span></div>
         <div className="practice-copy">
-          <div className="guide-section-index">D / UNA REFERENCIA, NO UNA RECETA</div>
-          <h2>Piensa en el resultado.<br /><em>Deja espacio para llegar.</em></h2>
-          <p>Indica qué necesitas, comparte lo que puede cambiar la respuesta y explica cómo vas a utilizarla. Pon límites donde un error tendría consecuencias. Luego revisa y afina.</p>
+          <h2>Empieza simple.<br /><em>Mejora con cada respuesta.</em></h2>
+          <p>Formula la tarea y comparte los datos relevantes. Si el resultado no funciona, precisa qué cambiar: el contexto, el formato o un límite. Prueba un ajuste cada vez.</p>
           <a className="source-link" href="https://learn.chatgpt.com/docs/prompting?translationFallback=es-419" target="_blank" rel="noreferrer">
-            Consultar la guía de prompting de OpenAI <ArrowRight size={16} />
+            Leer la guía de prompting de OpenAI <ArrowRight size={16} />
           </a>
         </div>
         <div className="practice-mark" aria-hidden="true">?</div>
       </section>
 
+      <section className="guide-resources" aria-labelledby="resources-title">
+        <div>
+          <h2 id="resources-title">Sigue aprendiendo.<br /><em>Prueba lo que te sirva.</em></h2>
+          <p>Estas guías amplían los conceptos y ofrecen recomendaciones prácticas. Algunas están dirigidas a desarrolladores y usan la API; sus ideas de claridad y estructura también son útiles en ChatGPT.</p>
+        </div>
+        <ul className="resource-list">
+          <li><a href="https://platform.openai.com/docs/guides/text?api-mode=chat#prompt-engineering" target="_blank" rel="noreferrer"><span>01</span><strong>Guía básica de ingeniería de prompts</strong><ArrowRight size={16} /></a></li>
+          <li><a href="https://platform.openai.com/docs/guides/reasoning-best-practices" target="_blank" rel="noreferrer"><span>02</span><strong>Buenas prácticas para modelos de razonamiento</strong><ArrowRight size={16} /></a></li>
+          <li><a href="https://help.openai.com/es-419/articles/4936848-how-do-i-create-a-good-prompt-for-an-ai-model" target="_blank" rel="noreferrer"><span>03</span><strong>Cómo crear un buen prompt para un modelo de IA</strong><ArrowRight size={16} /></a></li>
+          <li><a href="https://help.openai.com/es-419/articles/8096356-custom-instructions-for-chatgpt" target="_blank" rel="noreferrer"><span>04</span><strong>Instrucciones personalizadas de ChatGPT</strong><ArrowRight size={16} /></a></li>
+          <li><a href="https://help.openai.com/es-419/articles/9260256-chatgpt-capabilities-overview" target="_blank" rel="noreferrer"><span>05</span><strong>Capacidades de ChatGPT</strong><ArrowRight size={16} /></a></li>
+        </ul>
+      </section>
+
       <footer className="guide-footer">
-        <span>PROMPT STUDIO <i>×</i> CUADERNO DE PROMPTING</span>
         <a href="#inicio">Volver al inicio <ArrowDown size={14} /></a>
       </footer>
     </div>
