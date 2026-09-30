@@ -13,6 +13,7 @@ export interface LibraryItem {
   id: string
   category: LibraryCategory
   name: string
+  description?: string
   tags: string[]
   promptValue: string
 }
