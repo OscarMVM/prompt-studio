@@ -125,6 +125,7 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
 
   if (process.env.PLAYWRIGHT_KEEP_OPEN === '1') {
     test.setTimeout(0)
-    await page.pause()
+    console.log('La prueba terminó; cierra la ventana de Chromium para finalizar el proceso.')
+    await page.waitForEvent('close')
   }
 })
