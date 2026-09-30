@@ -12,6 +12,36 @@ async function fillField(page: Page, label: string, value: string) {
   await field.fill(value)
 }
 
+async function selectStage(page: Page, label: string) {
+  const stageButton = page.getByRole('button', { name: label, exact: true })
+  if (await stageButton.count() && await stageButton.first().isVisible()) {
+    await stageButton.first().click()
+    return
+  }
+
+  const stageSelect = page.getByRole('combobox').first()
+  if (await stageSelect.count()) {
+    await stageSelect.click()
+    await page.getByRole('option', { name: label, exact: true }).click()
+    return
+  }
+}
+
+async function showEditorOnMobile(page: Page) {
+  const editorTab = page.getByRole('tab', { name: 'Editor', exact: true })
+  if (await editorTab.count()) await editorTab.click()
+}
+
+async function getPromptPreview(page: Page) {
+  const promptTab = page.getByRole('tab', { name: 'Prompt', exact: true })
+  if (await promptTab.count()) await promptTab.click()
+
+  return page
+    .locator('[data-slot="card"]')
+    .filter({ hasText: 'Vista Previa' })
+    .locator('p.whitespace-pre-wrap')
+}
+
 test('crea un monstruo metálico desde el asistente', async ({ page }) => {
   await page.goto('/')
   await page.getByText('Comienza a diseñar un nuevo personaje desde cero', { exact: true }).click()
@@ -107,10 +137,7 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/characters\/[^/]+\/workflow$/)
   await expect(page.getByRole('link', { name: 'Ferrum', exact: true })).toBeVisible()
-  await page.getByRole('tab', { name: 'Prompt', exact: true }).click()
-  const generatedPrompt = page
-    .getByRole('tabpanel', { name: 'Prompt' })
-    .locator('p.whitespace-pre-wrap')
+  const generatedPrompt = await getPromptPreview(page)
   await expect(generatedPrompt).toContainText('cabello Filamentos finos de cobre')
   await expect(generatedPrompt).toContainText('ojos Ópticas circulares Ámbar luminoso')
   await expect(generatedPrompt).not.toContainText(/\b(?:hair|eyes|scarred|tattoos|reference image provided)\b/i)
@@ -136,20 +163,22 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
   ]
 
   for (const stage of stagePrompts) {
-    await page.getByRole('combobox').click()
-    await page.getByRole('option', { name: stage.label, exact: true }).click()
+    await selectStage(page, stage.label)
     await expect(generatedPrompt).toContainText(stage.opening)
     await expect(generatedPrompt).toContainText(stage.content)
     await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
   }
 
-  await page.getByRole('tab', { name: 'Editor', exact: true }).click()
+  await showEditorOnMobile(page)
+  const libraryCategorySelect = page.getByRole('combobox').last()
+  await libraryCategorySelect.click()
+  await page.getByRole('option', { name: 'Estilo', exact: true }).click()
   await page.getByRole('button', { name: /Arte conceptual/ }).click()
-  await page.getByRole('tab', { name: 'Prompt', exact: true }).click()
-  await expect(generatedPrompt).toContainText('vista principal de cuerpo completo con silueta y proporciones claras')
-  await expect(generatedPrompt).toContainText('paleta cromática y materiales')
-  await expect(generatedPrompt).toContainText('variaciones y vistas frontal, lateral y trasera')
-  await expect(generatedPrompt).toContainText('anotaciones breves para explicar detalles clave')
+  const promptAfterLibrary = await getPromptPreview(page)
+  await expect(promptAfterLibrary).toContainText('vista principal de cuerpo completo con silueta y proporciones claras')
+  await expect(promptAfterLibrary).toContainText('paleta cromática y materiales')
+  await expect(promptAfterLibrary).toContainText('variaciones y vistas frontal, lateral y trasera')
+  await expect(promptAfterLibrary).toContainText('anotaciones breves para explicar detalles clave')
 
   await page.getByRole('link', { name: 'Editar', exact: true }).click()
   await page.getByRole('tab', { name: 'Ropa y Equipo', exact: true }).click()
