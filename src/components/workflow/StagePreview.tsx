@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { WorkflowExportDialog } from './WorkflowExportDialog'
 
@@ -68,7 +69,17 @@ export function StagePreview() {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs">Prompt Negativo</Label>
+          <Tooltip>
+            <TooltipTrigger render={<span className="inline-flex w-fit cursor-help items-center gap-1" tabIndex={0} />}>
+              <Label className="text-xs">Prompt Negativo</Label>
+              <Info className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden="true" />
+            </TooltipTrigger>
+            <TooltipContent>
+              Detalla aquí todo lo que la imagen no debe incluir. Se añade al final del prompt con la
+              etiqueta "Debes evitar:". Escribe los elementos sueltos y separados por comas. Ejemplo: el
+              color rojo, texto, marcas de agua.
+            </TooltipContent>
+          </Tooltip>
           <Textarea
             value={stage.negativePrompt}
             onChange={(e) => setNegativePrompt(e.target.value)}

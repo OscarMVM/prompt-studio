@@ -3,6 +3,7 @@ import type { CharacterBible, EmotionalPaletteTag, VisualPersonalityTag } from '
 import type { PromptBlock } from '@/types/prompt'
 import type { WorkflowStage, StageId } from '@/types/workflow'
 import { STAGE_EXTRACTION_RULES, STAGE_DEFINITIONS } from '@/data/stageTemplates'
+import { conceptArtPromptValue } from '@/data/library'
 import { resolveFieldPath } from '@/lib/resolveFieldPath'
 
 const emotionalPaletteLabels: Record<EmotionalPaletteTag, string> = {
@@ -34,46 +35,130 @@ const visualPersonalityLabels: Record<VisualPersonalityTag, string> = {
   ornate: 'ornamentado',
 }
 
+type ContextField = readonly [label: string, value: string | undefined | null]
+
+function clean(value: string | undefined | null): string {
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+function joinValues(...values: (string | undefined | null)[]): string {
+  return values.map(clean).filter(Boolean).join(', ')
+}
+
+function collect(fields: readonly ContextField[]): string {
+  return fields
+    .map(([label, value]) => [label, clean(value)] as const)
+    .filter(([, value]) => value.length > 0)
+    .map(([label, value]) => `${label}: ${value}`)
+    .join('; ')
+}
+
 export function buildCharacterContext(character: CharacterBible): string {
-  const parts: string[] = []
   const g = character.general
   const a = character.appearance
 
-  if (character.name) parts.push(character.name)
+  const general = collect([
+    ['Nombre', character.name],
+    ['Edad', g.age],
+    ['Sexo', g.sex],
+    ['Especie', g.species],
+    ['Raza', g.race],
+    ['Clase', g.class],
+    ['Profesión', g.profession],
+    ['Altura', g.height],
+    ['Peso', g.weight],
+    ['Constitución', g.constitution],
+    ['Nivel tecnológico', g.techLevel],
+    ['Universo', g.universe],
+    ['Época', g.era],
+  ])
 
-  const identity = [
-    g.species,
-    g.profession,
-  ].filter(Boolean).join(' ')
-  if (identity) parts.push(identity)
+  const appearance = collect([
+    ['Piel', a.skinColor],
+    ['Rostro', a.faceShape],
+    ['Cabello', joinValues(a.hair?.style, a.hair?.color)],
+    ['Ojos', joinValues(a.eyes?.shape, a.eyes?.color)],
+    ['Pestañas', a.eyelashes],
+    ['Cejas', a.eyebrows],
+    ['Nariz', a.nose],
+    ['Labios', a.lips],
+    ['Mandíbula', a.jaw],
+    ['Mentón', a.chin],
+    ['Orejas', a.ears],
+    ['Barba', a.beard],
+    ['Bigote', a.mustache],
+    ['Pecas', a.freckles],
+    ['Cuello', a.neck],
+    ['Hombros', a.shoulders],
+    ['Brazos', a.arms],
+    ['Piernas', a.legs],
+    ['Manos', a.hands],
+    ['Pies', a.feet],
+    ['Cicatrices', a.scars],
+    ['Tatuajes', a.tattoos],
+    ['Marcas', a.marks],
+    ['Quemaduras', a.burns],
+    ['Prótesis', a.prosthetics],
+    ['Mutaciones', a.mutations],
+  ])
 
-  const physique = [g.height, g.weight, g.constitution].filter(Boolean).join(', ')
-  if (physique) parts.push(physique)
+  const clothing = collect([
+    ['Cabeza', character.clothing?.head],
+    ['Torso', character.clothing?.torso],
+    ['Piernas de ropa', character.clothing?.legs],
+    ['Calzado', character.clothing?.footwear],
+    ['Guantes', character.clothing?.gloves],
+    ['Capa', character.clothing?.cape],
+    ['Cinturón', character.clothing?.belt],
+    ['Armadura', character.clothing?.armor],
+    ['Joyería', character.clothing?.jewelry],
+    ['Accesorios', character.clothing?.accessories],
+  ])
 
-  const hair = [a.hair?.style, a.hair?.color].filter(Boolean).join(' ')
-  if (hair) parts.push('cabello ' + hair)
+  const equipment = collect([
+    ['Armas', character.equipment?.weapons],
+    ['Escudos', character.equipment?.shields],
+    ['Herramientas', character.equipment?.tools],
+    ['Mochila', character.equipment?.backpack],
+    ['Instrumentos', character.equipment?.instruments],
+    ['Objetos mágicos', character.equipment?.magicItems],
+    ['Tecnología', character.equipment?.technology],
+    ['Mascotas', character.equipment?.pets],
+  ])
 
-  const eyes = [a.eyes?.shape, a.eyes?.color].filter(Boolean).join(' ')
-  if (eyes) parts.push('ojos ' + eyes)
+  const colors = collect([
+    ['Color primario', character.colors?.primary],
+    ['Color secundario', character.colors?.secondary],
+    ['Color de acento', character.colors?.accent],
+    ['Temperatura', character.colors?.temperature],
+    ['Contraste', character.colors?.contrast],
+    ['Saturación', character.colors?.saturation],
+  ])
 
-  if (a.skinColor) parts.push('piel ' + a.skinColor)
-  if (a.faceShape) parts.push('rostro ' + a.faceShape)
-  if (a.beard) parts.push('barba ' + a.beard)
-  if (a.mustache) parts.push('bigote ' + a.mustache)
-  if (a.scars) parts.push('cicatrices: ' + a.scars)
-  if (a.tattoos) parts.push('tatuajes: ' + a.tattoos)
+  const traits = collect([
+    [
+      'Personalidad visual',
+      character.visualPersonality
+        ?.map((tag) => visualPersonalityLabels[tag])
+        .join(', '),
+    ],
+    [
+      'Paleta emocional',
+      character.emotionalPalette
+        ?.map((tag) => emotionalPaletteLabels[tag])
+        .join(', '),
+    ],
+    [
+      'Referencias',
+      character.references?.hasReferences
+        ? joinValues('imagen de referencia disponible', character.references.notes)
+        : '',
+    ],
+  ])
 
-  if (character.emotionalPalette?.length) {
-    parts.push(character.emotionalPalette.map((tag) => emotionalPaletteLabels[tag]).join(', '))
-  }
-  if (character.visualPersonality?.length) {
-    parts.push(character.visualPersonality.map((tag) => visualPersonalityLabels[tag]).join(', '))
-  }
-  if (character.references?.hasReferences) {
-    parts.push('imagen de referencia disponible')
-  }
-
-  return parts.join(', ')
+  return [general, appearance, clothing, equipment, colors, traits]
+    .filter(Boolean)
+    .join('. ')
 }
 
 export function autoGenerateBlocksForStage(
@@ -132,20 +217,33 @@ export function autoPopulateAllStages(
   })
 }
 
+const NEGATIVE_LABEL = 'Debes evitar:'
+const CHARACTER_LABEL = 'Información del personaje:'
+const NO_TEXT_LIMIT = 'Entrega una ilustración final libre de texto y anotaciones.'
+
+// Etapas cuya salida es una hoja de referencia y por convención lleva etiquetas.
+// En el resto, la instrucción contradeciría explícitamente el encabezado de concept art.
+const ANNOTATION_EXEMPT_STAGES = new Set<StageId>(['ideacion', 'turnaround', 'expresiones'])
+
 export function generateStagePrompt(
   blocks: PromptBlock[],
   customText: string,
   characterContext: string,
-  stageId: StageId
+  stageId: StageId,
+  negativePrompt: string
 ): string {
   const enabled = blocks
     .filter((b) => b.enabled)
     .sort((a, b) => a.order - b.order)
 
   const blockText = enabled.map((b) => b.value).join(', ')
-  const context = [characterContext, blockText, customText].filter(Boolean).join(', ')
-  const instructions: Record<StageId, { objective: string; format: string; limits: string }> = {
+  const character = [characterContext, blockText, customText]
+    .map(clean)
+    .filter(Boolean)
+    .join(', ')
+  const instructions: Record<StageId, { lead?: string; objective: string; format: string; limits: string }> = {
     ideacion: {
+      lead: conceptArtPromptValue,
       objective: 'Genera una imagen conceptual del personaje que defina su identidad visual, personalidad y atmósfera.',
       format: 'Muestra su identidad, personalidad y atmósfera en una propuesta visual clara.',
       limits: 'Conserva los rasgos establecidos del personaje y evita añadir detalles contradictorios.',
@@ -182,13 +280,21 @@ export function generateStagePrompt(
     },
   }
   const instruction = instructions[stageId]
+  const negative = negativePrompt.trim().replace(/\s*\n+\s*/g, ', ')
 
   return [
     instruction.objective,
-    context,
-    instruction.format,
-    instruction.limits,
+    instruction.lead || '',
+    character ? `${CHARACTER_LABEL} ${character}` : '',
+    [
+      instruction.format,
+      instruction.limits,
+      ANNOTATION_EXEMPT_STAGES.has(stageId) ? '' : NO_TEXT_LIMIT,
+      negative ? `${NEGATIVE_LABEL} ${negative}.` : '',
+    ]
+      .filter(Boolean)
+      .join(' '),
   ]
     .filter(Boolean)
-    .join(' ')
+    .join('\n\n')
 }

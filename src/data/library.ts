@@ -1,6 +1,6 @@
 import type { LibraryItem } from '@/types/library'
 
-export const conceptArtPromptValue = 'arte conceptual para una lámina de diseño de personaje: vista principal de cuerpo completo con silueta y proporciones claras; rasgos distintivos del rostro, vestuario y equipo; paleta cromática y materiales; incluye variaciones y vistas frontal, lateral y trasera cuando ayuden a comparar; añade anotaciones breves para explicar detalles clave. Acabado profesional.'
+export const conceptArtPromptValue = 'Arte conceptual para una lámina de diseño de personaje: vista principal de cuerpo completo con silueta y proporciones claras; rasgos distintivos del rostro, vestuario y equipo; paleta cromática y materiales; incluye variaciones y vistas frontal, lateral y trasera cuando ayuden a comparar; añade anotaciones breves para explicar detalles clave. Acabado profesional.'
 
 export const styleLibrary: LibraryItem[] = [
   { id: 'anime', category: 'style', name: 'Anime', tags: ['anime', 'japonés'], promptValue: 'estilo anime, sombreado por celdas, colores vibrantes' },
@@ -24,7 +24,6 @@ export const styleLibrary: LibraryItem[] = [
   { id: 'cell-shading', category: 'style', name: 'Sombreado por celdas', tags: ['celdas', 'dibujo animado'], promptValue: 'sombreado por celdas, colores planos, contornos marcados' },
   { id: 'photorealistic', category: 'style', name: 'Fotorrealista', tags: ['fotografía', 'realismo'], promptValue: 'fotorrealista, detalle extremo, resolución 8K' },
   { id: 'fantasy-illustration', category: 'style', name: 'Ilustración fantástica', tags: ['fantasía', 'arte'], promptValue: 'ilustración fantástica, épica, entorno detallado' },
-  { id: 'concept-art', category: 'style', name: 'Arte conceptual', tags: ['concepto', 'diseño'], promptValue: conceptArtPromptValue },
 ]
 
 export const cameraLibrary: LibraryItem[] = [

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
+import { buildCharacterContext } from '@/lib/autoGenerateStage'
 import { StageSidebar } from '@/components/workflow/StageSidebar'
 import { StageCanvas } from '@/components/workflow/StageCanvas'
 import { StagePreview } from '@/components/workflow/StagePreview'
@@ -28,6 +29,7 @@ export function WorkflowPage() {
     createWorkflow,
     activeStageId,
     setActiveStage,
+    setCharacterContext,
   } = useWorkflowStore()
 
   const character = characters.find((c) => c.id === id)
@@ -54,6 +56,12 @@ export function WorkflowPage() {
       createWorkflow(character)
     }
   }, [character, workflow, isLoading, createWorkflow])
+
+  useEffect(() => {
+    if (character && workflow) {
+      setCharacterContext(buildCharacterContext(character))
+    }
+  }, [character, workflow, setCharacterContext])
 
   if (!character) {
     return (

@@ -14,6 +14,7 @@ import {
   buildCharacterContext,
 } from '@/lib/autoGenerateStage'
 import { STAGE_DEFINITIONS } from '@/data/stageTemplates'
+import { conceptArtPromptValue } from '@/data/library'
 
 interface WorkflowState {
   workflow: WorkflowProject | null
@@ -36,6 +37,7 @@ interface WorkflowState {
   setCustomText: (text: string) => void
   setNegativePrompt: (text: string) => void
   setEngineTemplate: (templateId: string) => void
+  setCharacterContext: (context: string) => void
 
   generateStagePrompt: () => string
   generateAllPrompts: () => { stageId: StageId; label: string; prompt: string; negativePrompt: string }[]
@@ -55,14 +57,27 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     const workflow = await db.workflows.get(characterId)
     if (workflow) {
       const stageIndexes = new Map(STAGE_DEFINITIONS.map(({ id, index }) => [id, index]))
+      let removedLegacyConceptArt = false
       const stages = workflow.stages
         .filter((stage) => stageIndexes.has(stage.id))
         .map((stage) => {
           const normalizedStage = { ...stage, index: stageIndexes.get(stage.id)! }
           delete (normalizedStage as WorkflowStage & { isCompleted?: boolean }).isCompleted
+          // El prompt de concept art ahora se integra como encabezado de la etapa
+          // ideacion, así que el bloque autogenerado de flujos antiguos sobraría.
+          if (normalizedStage.id === 'ideacion' && normalizedStage.blocks?.length) {
+            const blocks = normalizedStage.blocks.filter(
+              (block) => block.value !== conceptArtPromptValue
+            )
+            if (blocks.length !== normalizedStage.blocks.length) {
+              normalizedStage.blocks = blocks
+              removedLegacyConceptArt = true
+            }
+          }
           return normalizedStage
         })
       const stagesChanged =
+        removedLegacyConceptArt ||
         stages.length !== workflow.stages.length ||
         stages.some((stage, index) =>
           stage.index !== workflow.stages[index].index ||
@@ -75,14 +90,14 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         await db.workflows.update(characterId, { stages, updatedAt: workflow.updatedAt })
       }
     }
-    if (workflow && !workflow.characterContext) {
+    if (workflow) {
       const character = await db.characters.get(characterId)
       if (character) {
         const characterContext = buildCharacterContext(character as CharacterBible)
-        workflow.characterContext = characterContext
-        await db.workflows.update(characterId, { characterContext })
-      } else {
-        workflow.characterContext = ''
+        if (workflow.characterContext !== characterContext) {
+          workflow.characterContext = characterContext
+          await db.workflows.update(characterId, { characterContext })
+        }
       }
     }
     const activeStageId = workflow?.stages.some((stage) => stage.id === get().activeStageId)
@@ -255,12 +270,30 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     get()._persist()
   },
 
+  setCharacterContext: (context) => {
+    let changed = false
+    set((state) => {
+      if (!state.workflow || state.workflow.characterContext === context) return state
+      changed = true
+      return {
+        workflow: { ...state.workflow, characterContext: context, updatedAt: Date.now() },
+      }
+    })
+    if (changed) get()._persist()
+  },
+
   generateStagePrompt: () => {
     const { workflow, activeStageId } = get()
     if (!workflow) return ''
     const stage = workflow.stages.find((s) => s.id === activeStageId)
     if (!stage) return ''
-    return generateStagePrompt(stage.blocks, stage.customText, workflow.characterContext, stage.id)
+    return generateStagePrompt(
+      stage.blocks,
+      stage.customText,
+      workflow.characterContext,
+      stage.id,
+      stage.negativePrompt
+    )
   },
 
   generateAllPrompts: () => {
@@ -272,7 +305,13 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
       return {
         stageId: stage.id,
         label: meta.label,
-        prompt: generateStagePrompt(stage.blocks, stage.customText, workflow.characterContext, stage.id),
+        prompt: generateStagePrompt(
+          stage.blocks,
+          stage.customText,
+          workflow.characterContext,
+          stage.id,
+          stage.negativePrompt
+        ),
         negativePrompt: stage.negativePrompt,
       }
     })
