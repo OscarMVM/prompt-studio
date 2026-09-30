@@ -8,7 +8,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   styleLibrary,
   cameraLibrary,
-  lensLibrary,
   distanceLibrary,
   lightingLibrary,
   compositionLibrary,
@@ -20,9 +19,8 @@ import type { LibraryItem, LibraryCategory } from '@/types/library'
 
 const categories: { value: LibraryCategory; label: string; items: LibraryItem[] }[] = [
   { value: 'style', label: 'Estilos', items: styleLibrary },
-  { value: 'camera', label: 'Cámaras', items: cameraLibrary },
-  { value: 'lens', label: 'Lentes', items: lensLibrary },
-  { value: 'distance', label: 'Distancias', items: distanceLibrary },
+  { value: 'camera', label: 'Ángulos y vistas', items: cameraLibrary },
+  { value: 'distance', label: 'Planos', items: distanceLibrary },
   { value: 'lighting', label: 'Iluminación', items: lightingLibrary },
   { value: 'composition', label: 'Composición', items: compositionLibrary },
   { value: 'pose', label: 'Poses', items: poseLibrary },
@@ -39,6 +37,9 @@ function LibraryGrid({ items }: { items: LibraryItem[] }) {
             <CardTitle className="text-sm">{item.name}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
+            {item.description && (
+              <p className="text-xs leading-relaxed text-muted-foreground">{item.description}</p>
+            )}
             <p className="text-xs text-muted-foreground">{item.promptValue}</p>
             <div className="flex flex-wrap gap-1">
               {item.tags.map((tag) => (
@@ -62,6 +63,7 @@ export function LibraryPage() {
       ? items.filter(
           (item) =>
             item.name.toLowerCase().includes(search.toLowerCase()) ||
+            item.description?.toLowerCase().includes(search.toLowerCase()) ||
             item.promptValue.toLowerCase().includes(search.toLowerCase()) ||
             item.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()))
         )
