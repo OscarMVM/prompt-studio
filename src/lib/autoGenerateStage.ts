@@ -1,9 +1,38 @@
 import { nanoid } from 'nanoid'
-import type { CharacterBible } from '@/types/character'
+import type { CharacterBible, EmotionalPaletteTag, VisualPersonalityTag } from '@/types/character'
 import type { PromptBlock } from '@/types/prompt'
 import type { WorkflowStage, StageId } from '@/types/workflow'
 import { STAGE_EXTRACTION_RULES, STAGE_DEFINITIONS } from '@/data/stageTemplates'
 import { resolveFieldPath } from '@/lib/resolveFieldPath'
+
+const emotionalPaletteLabels: Record<EmotionalPaletteTag, string> = {
+  serious: 'serio',
+  smiling: 'sonriente',
+  melancholic: 'melancólico',
+  aggressive: 'agresivo',
+  mysterious: 'misterioso',
+  elegant: 'elegante',
+  innocent: 'inocente',
+  dark: 'sombrío',
+  playful: 'juguetón',
+  stoic: 'estoico',
+  passionate: 'apasionado',
+  serene: 'sereno',
+}
+
+const visualPersonalityLabels: Record<VisualPersonalityTag, string> = {
+  elegant: 'elegante',
+  dark: 'oscuro',
+  chaotic: 'caótico',
+  heroic: 'heroico',
+  villain: 'villanesco',
+  mystical: 'místico',
+  military: 'militar',
+  technological: 'tecnológico',
+  natural: 'natural',
+  minimalist: 'minimalista',
+  ornate: 'ornamentado',
+}
 
 export function buildCharacterContext(character: CharacterBible): string {
   const parts: string[] = []
@@ -22,26 +51,26 @@ export function buildCharacterContext(character: CharacterBible): string {
   if (physique) parts.push(physique)
 
   const hair = [a.hair?.style, a.hair?.color].filter(Boolean).join(' ')
-  if (hair) parts.push(hair + ' hair')
+  if (hair) parts.push('cabello ' + hair)
 
   const eyes = [a.eyes?.shape, a.eyes?.color].filter(Boolean).join(' ')
-  if (eyes) parts.push(eyes + ' eyes')
+  if (eyes) parts.push('ojos ' + eyes)
 
-  if (a.skinColor) parts.push(a.skinColor + ' skin')
-  if (a.faceShape) parts.push(a.faceShape + ' face')
-  if (a.beard) parts.push(a.beard + ' beard')
-  if (a.mustache) parts.push(a.mustache + ' mustache')
-  if (a.scars) parts.push('scarred: ' + a.scars)
-  if (a.tattoos) parts.push('tattoos: ' + a.tattoos)
+  if (a.skinColor) parts.push('piel ' + a.skinColor)
+  if (a.faceShape) parts.push('rostro ' + a.faceShape)
+  if (a.beard) parts.push('barba ' + a.beard)
+  if (a.mustache) parts.push('bigote ' + a.mustache)
+  if (a.scars) parts.push('cicatrices: ' + a.scars)
+  if (a.tattoos) parts.push('tatuajes: ' + a.tattoos)
 
   if (character.emotionalPalette?.length) {
-    parts.push(character.emotionalPalette.join(', '))
+    parts.push(character.emotionalPalette.map((tag) => emotionalPaletteLabels[tag]).join(', '))
   }
   if (character.visualPersonality?.length) {
-    parts.push(character.visualPersonality.join(', '))
+    parts.push(character.visualPersonality.map((tag) => visualPersonalityLabels[tag]).join(', '))
   }
   if (character.references?.hasReferences) {
-    parts.push('reference image provided')
+    parts.push('imagen de referencia disponible')
   }
 
   return parts.join(', ')
@@ -122,7 +151,7 @@ export function generateStagePrompt(
       limits: 'Conserva los rasgos establecidos del personaje y evita añadir detalles contradictorios.',
     },
     sketch: {
-      objective: 'Genera una imagen de boceto y lineart que establezca la estructura visual inicial del personaje.',
+      objective: 'Genera una imagen de boceto y entintado que establezca la estructura visual inicial del personaje.',
       format: 'Prioriza silueta, proporciones, rasgos distintivos y líneas legibles.',
       limits: 'Mantén el acabado de boceto; no lo conviertas en una ilustración final renderizada.',
     },

@@ -111,7 +111,11 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
   const generatedPrompt = page
     .getByRole('tabpanel', { name: 'Prompt' })
     .locator('p.whitespace-pre-wrap')
+  await expect(generatedPrompt).toContainText('cabello Filamentos finos de cobre')
+  await expect(generatedPrompt).toContainText('ojos Ópticas circulares Ámbar luminoso')
+  await expect(generatedPrompt).not.toContainText(/\b(?:hair|eyes|scarred|tattoos|reference image provided)\b/i)
   await expect(generatedPrompt).toContainText('Genera una imagen conceptual')
+  await expect(generatedPrompt).toContainText('vista principal de cuerpo completo con silueta y proporciones claras')
   await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
 
   if (env.PLAYWRIGHT_KEEP_OPEN === '1') {
@@ -122,21 +126,30 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
   }
 
   const stagePrompts = [
-    { label: 'Concepto y Dirección', opening: 'Genera una imagen conceptual' },
-    { label: 'Boceto y Lineart', opening: 'Genera una imagen de boceto y lineart' },
-    { label: 'Vistas del Personaje', opening: 'Genera una imagen tipo hoja de referencia' },
-    { label: 'Paleta y Color', opening: 'Genera una imagen del personaje' },
-    { label: 'Rostro y Expresiones', opening: 'Genera una imagen tipo hoja de expresiones' },
-    { label: 'Acciones y Poses', opening: 'Genera una imagen de cuerpo completo' },
-    { label: 'Render Final', opening: 'Genera una ilustración final' },
+    { label: 'Concepto y Dirección', opening: 'Genera una imagen conceptual', content: 'Ferrum' },
+    { label: 'Boceto y entintado', opening: 'Genera una imagen de boceto y entintado', content: 'boceto de arte conceptual' },
+    { label: 'Vistas del Personaje', opening: 'Genera una imagen tipo hoja de referencia', content: 'vista frontal' },
+    { label: 'Paleta y Color', opening: 'Genera una imagen del personaje', content: 'paleta de colores vibrante y armoniosa' },
+    { label: 'Rostro y Expresiones', opening: 'Genera una imagen tipo hoja de expresiones', content: 'Ferrum' },
+    { label: 'Acciones y Poses', opening: 'Genera una imagen de cuerpo completo', content: 'Ferrum' },
+    { label: 'Ilustración final', opening: 'Genera una ilustración final', content: 'Ferrum' },
   ]
 
   for (const stage of stagePrompts) {
     await page.getByRole('combobox').click()
     await page.getByRole('option', { name: stage.label, exact: true }).click()
     await expect(generatedPrompt).toContainText(stage.opening)
+    await expect(generatedPrompt).toContainText(stage.content)
     await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
   }
+
+  await page.getByRole('tab', { name: 'Editor', exact: true }).click()
+  await page.getByRole('button', { name: /Arte conceptual/ }).click()
+  await page.getByRole('tab', { name: 'Prompt', exact: true }).click()
+  await expect(generatedPrompt).toContainText('vista principal de cuerpo completo con silueta y proporciones claras')
+  await expect(generatedPrompt).toContainText('paleta cromática y materiales')
+  await expect(generatedPrompt).toContainText('variaciones y vistas frontal, lateral y trasera')
+  await expect(generatedPrompt).toContainText('anotaciones breves para explicar detalles clave')
 
   await page.getByRole('link', { name: 'Editar', exact: true }).click()
   await page.getByRole('tab', { name: 'Ropa y Equipo', exact: true }).click()

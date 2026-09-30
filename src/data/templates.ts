@@ -15,7 +15,7 @@ export const engineTemplates: EngineTemplate[] = [
     prefix: '',
     suffix: '',
     separator: ', ',
-    negativePrefix: 'Negative prompt: ',
+    negativePrefix: 'Prompt negativo: ',
   },
   {
     id: 'flux',
@@ -28,7 +28,7 @@ export const engineTemplates: EngineTemplate[] = [
   {
     id: 'chatgpt',
     name: 'ChatGPT',
-    prefix: 'Create a detailed character illustration of ',
+    prefix: 'Genera una ilustración detallada del personaje: ',
     suffix: '',
     separator: '. ',
     negativePrefix: '',
@@ -36,7 +36,7 @@ export const engineTemplates: EngineTemplate[] = [
   {
     id: 'dalle',
     name: 'DALL-E',
-    prefix: 'A detailed illustration of ',
+    prefix: 'Crea una ilustración detallada de ',
     suffix: '',
     separator: '. ',
     negativePrefix: '',
@@ -47,6 +47,6 @@ export const engineTemplates: EngineTemplate[] = [
     prefix: '',
     suffix: '',
     separator: ', ',
-    negativePrefix: 'Negative prompt: ',
+    negativePrefix: 'Prompt negativo: ',
   },
 ]

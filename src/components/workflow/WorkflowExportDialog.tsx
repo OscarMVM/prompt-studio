@@ -58,14 +58,14 @@ export function WorkflowExportDialog() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `workflow-${character?.name || 'sin-titulo'}.json`
+    a.download = `flujo-${character?.name || 'sin-titulo'}.json`
     a.click()
     URL.revokeObjectURL(url)
   }
 
   const handleExportMarkdown = () => {
     const lines: string[] = []
-    lines.push(`# Exportación de Workflow`)
+    lines.push(`# Exportación del flujo de trabajo`)
     lines.push('')
     if (character) {
       lines.push(`## Personaje: ${character.name}`)
@@ -89,7 +89,7 @@ export function WorkflowExportDialog() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `workflow-${character?.name || 'sin-titulo'}.md`
+    a.download = `flujo-${character?.name || 'sin-titulo'}.md`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -114,7 +114,7 @@ export function WorkflowExportDialog() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `workflow-${character?.name || 'sin-titulo'}.txt`
+    a.download = `flujo-${character?.name || 'sin-titulo'}.txt`
     a.click()
     URL.revokeObjectURL(url)
   }

@@ -98,7 +98,8 @@ export function PromptingPage() {
     <div className="prompt-guide">
       <header className="guide-cover" id="inicio">
         <div className="guide-cover-copy">
-          <h1>Pide con claridad.<br /><span>Ajusta sobre la marcha.</span></h1>
+          <h1>Guía de prompts</h1>
+          <p className="guide-cover-support">Pide con claridad.<br />Ajusta sobre la marcha.</p>
           <p className="guide-cover-lede">
             Empieza con una tarea sencilla. Añade contexto, formato o límites cuando ayuden a obtener una respuesta útil; luego revisa y afina.
           </p>
