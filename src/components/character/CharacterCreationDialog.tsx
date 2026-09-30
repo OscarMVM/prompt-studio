@@ -56,7 +56,7 @@ interface WizardData {
 }
 
 const STEPS = [
-  { label: 'General', icon: User },
+  { label: 'Datos generales', icon: User },
   { label: 'Apariencia', icon: Eye },
   { label: 'Emociones', icon: Heart },
   { label: 'Ropa y Equipo', icon: Shirt },

@@ -1,9 +1,38 @@
 import { nanoid } from 'nanoid'
-import type { CharacterBible } from '@/types/character'
+import type { CharacterBible, EmotionalPaletteTag, VisualPersonalityTag } from '@/types/character'
 import type { PromptBlock } from '@/types/prompt'
 import type { WorkflowStage, StageId } from '@/types/workflow'
 import { STAGE_EXTRACTION_RULES, STAGE_DEFINITIONS } from '@/data/stageTemplates'
 import { resolveFieldPath } from '@/lib/resolveFieldPath'
+
+const emotionalPaletteLabels: Record<EmotionalPaletteTag, string> = {
+  serious: 'serio',
+  smiling: 'sonriente',
+  melancholic: 'melancólico',
+  aggressive: 'agresivo',
+  mysterious: 'misterioso',
+  elegant: 'elegante',
+  innocent: 'inocente',
+  dark: 'sombrío',
+  playful: 'juguetón',
+  stoic: 'estoico',
+  passionate: 'apasionado',
+  serene: 'sereno',
+}
+
+const visualPersonalityLabels: Record<VisualPersonalityTag, string> = {
+  elegant: 'elegante',
+  dark: 'oscuro',
+  chaotic: 'caótico',
+  heroic: 'heroico',
+  villain: 'villanesco',
+  mystical: 'místico',
+  military: 'militar',
+  technological: 'tecnológico',
+  natural: 'natural',
+  minimalist: 'minimalista',
+  ornate: 'ornamentado',
+}
 
 export function buildCharacterContext(character: CharacterBible): string {
   const parts: string[] = []
@@ -22,26 +51,26 @@ export function buildCharacterContext(character: CharacterBible): string {
   if (physique) parts.push(physique)
 
   const hair = [a.hair?.style, a.hair?.color].filter(Boolean).join(' ')
-  if (hair) parts.push(hair + ' hair')
+  if (hair) parts.push('cabello ' + hair)
 
   const eyes = [a.eyes?.shape, a.eyes?.color].filter(Boolean).join(' ')
-  if (eyes) parts.push(eyes + ' eyes')
+  if (eyes) parts.push('ojos ' + eyes)
 
-  if (a.skinColor) parts.push(a.skinColor + ' skin')
-  if (a.faceShape) parts.push(a.faceShape + ' face')
-  if (a.beard) parts.push(a.beard + ' beard')
-  if (a.mustache) parts.push(a.mustache + ' mustache')
-  if (a.scars) parts.push('scarred: ' + a.scars)
-  if (a.tattoos) parts.push('tattoos: ' + a.tattoos)
+  if (a.skinColor) parts.push('piel ' + a.skinColor)
+  if (a.faceShape) parts.push('rostro ' + a.faceShape)
+  if (a.beard) parts.push('barba ' + a.beard)
+  if (a.mustache) parts.push('bigote ' + a.mustache)
+  if (a.scars) parts.push('cicatrices: ' + a.scars)
+  if (a.tattoos) parts.push('tatuajes: ' + a.tattoos)
 
   if (character.emotionalPalette?.length) {
-    parts.push(character.emotionalPalette.join(', '))
+    parts.push(character.emotionalPalette.map((tag) => emotionalPaletteLabels[tag]).join(', '))
   }
   if (character.visualPersonality?.length) {
-    parts.push(character.visualPersonality.join(', '))
+    parts.push(character.visualPersonality.map((tag) => visualPersonalityLabels[tag]).join(', '))
   }
   if (character.references?.hasReferences) {
-    parts.push('reference image provided')
+    parts.push('imagen de referencia disponible')
   }
 
   return parts.join(', ')
@@ -117,37 +146,37 @@ export function generateStagePrompt(
   const context = [characterContext, blockText, customText].filter(Boolean).join(', ')
   const instructions: Record<StageId, { objective: string; format: string; limits: string }> = {
     ideacion: {
-      objective: 'Define el concepto visual y la dirección creativa del personaje.',
-      format: 'Describe identidad, personalidad y atmósfera en una propuesta visual clara.',
+      objective: 'Genera una imagen conceptual del personaje que defina su identidad visual, personalidad y atmósfera.',
+      format: 'Muestra su identidad, personalidad y atmósfera en una propuesta visual clara.',
       limits: 'Conserva los rasgos establecidos del personaje y evita añadir detalles contradictorios.',
     },
     sketch: {
-      objective: 'Establece la estructura inicial del personaje mediante un boceto y lineart.',
+      objective: 'Genera una imagen de boceto y entintado que establezca la estructura visual inicial del personaje.',
       format: 'Prioriza silueta, proporciones, rasgos distintivos y líneas legibles.',
       limits: 'Mantén el acabado de boceto; no lo conviertas en una ilustración final renderizada.',
     },
     turnaround: {
-      objective: 'Muestra el mismo diseño del personaje desde varios ángulos.',
+      objective: 'Genera una imagen tipo hoja de referencia que muestre el mismo diseño del personaje desde varios ángulos.',
       format: 'Organiza vistas frontal, lateral, trasera y tres cuartos como una hoja de referencia.',
       limits: 'Mantén constantes proporciones, vestuario, colores y accesorios entre las vistas.',
     },
     color: {
-      objective: 'Define y aplica una paleta de color coherente para el personaje.',
+      objective: 'Genera una imagen del personaje con una paleta de color coherente y claramente aplicada.',
       format: 'Distingue colores principales, secundarios y de acento, mostrando su relación.',
       limits: 'Respeta los colores indicados y conserva la legibilidad del diseño.',
     },
     expresiones: {
-      objective: 'Explora el rostro y las expresiones del personaje.',
+      objective: 'Genera una imagen tipo hoja de expresiones que explore el rostro y las emociones del personaje.',
       format: 'Haz visibles los rasgos faciales y comunica con claridad la emoción solicitada.',
       limits: 'Conserva la identidad facial y evita cambiar edad, especie o rasgos distintivos.',
     },
     poses: {
-      objective: 'Representa una acción y una pose que expresen el lenguaje corporal del personaje.',
+      objective: 'Genera una imagen de cuerpo completo del personaje en una acción y pose que expresen su lenguaje corporal.',
       format: 'Muestra el cuerpo completo con una postura legible y una silueta clara.',
       limits: 'Respeta la anatomía, el equipo y las características ya definidas.',
     },
     'render-final': {
-      objective: 'Crear una ilustración final pulida que reúna el diseño del personaje.',
+      objective: 'Genera una ilustración final del personaje, pulida y lista para presentación.',
       format: 'Integra apariencia, vestuario, equipo, pose, iluminación y composición en una imagen coherente.',
       limits: 'Conserva los detalles establecidos y evita añadir elementos que compitan con el personaje.',
     },
@@ -155,9 +184,11 @@ export function generateStagePrompt(
   const instruction = instructions[stageId]
 
   return [
-    `Objetivo: ${instruction.objective}`,
-    `Contexto: ${context || 'No hay detalles adicionales del personaje.'}`,
-    `Formato: ${instruction.format}`,
-    `Límites: ${instruction.limits}`,
-  ].join('\n\n')
+    instruction.objective,
+    context,
+    instruction.format,
+    instruction.limits,
+  ]
+    .filter(Boolean)
+    .join(' ')
 }

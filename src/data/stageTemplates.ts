@@ -1,4 +1,5 @@
 import type { StageMeta, StageId, StageExtractionRule } from '@/types/workflow'
+import { conceptArtPromptValue } from '@/data/library'
 
 export const STAGE_DEFINITIONS: StageMeta[] = [
   {
@@ -12,7 +13,7 @@ export const STAGE_DEFINITIONS: StageMeta[] = [
   {
     id: 'sketch',
     index: 1,
-    label: 'Boceto y Lineart',
+    label: 'Boceto y entintado',
     description: 'Genera prompts para definir el estilo de trazo y la estructura inicial.',
     icon: 'Pencil',
     focusCategories: ['style', 'composition', 'quality'],
@@ -52,7 +53,7 @@ export const STAGE_DEFINITIONS: StageMeta[] = [
   {
     id: 'render-final',
     index: 6,
-    label: 'Render Final',
+    label: 'Ilustración final',
     description: 'Combina los detalles del personaje en un prompt para una ilustración pulida.',
     icon: 'Image',
     focusCategories: ['style', 'quality', 'camera', 'lens', 'lighting', 'pose', 'expression', 'composition', 'distance', 'mood'],
@@ -75,29 +76,30 @@ export const STAGE_EXTRACTION_RULES: StageExtractionRule[] = [
   { stageId: 'ideacion', category: 'style', label: 'Época', fieldPath: 'general.era' },
   { stageId: 'ideacion', category: 'style', label: 'Nivel Tecnológico', fieldPath: 'general.techLevel' },
   { stageId: 'ideacion', category: 'style', label: 'Personalidad Visual', fieldPath: 'visualPersonality' },
+  { stageId: 'ideacion', category: 'style', label: 'Arte conceptual', fieldPath: `_static:${conceptArtPromptValue}` },
 
-  // Sketch
+  // Boceto
   { stageId: 'sketch', category: 'quality', label: 'Estilo de Cabello', fieldPath: 'appearance.hair.style' },
   { stageId: 'sketch', category: 'quality', label: 'Color de Cabello', fieldPath: 'appearance.hair.color' },
   { stageId: 'sketch', category: 'quality', label: 'Forma de Ojos', fieldPath: 'appearance.eyes.shape' },
   { stageId: 'sketch', category: 'quality', label: 'Cicatrices', fieldPath: 'appearance.scars' },
   { stageId: 'sketch', category: 'quality', label: 'Tatuajes', fieldPath: 'appearance.tattoos' },
   { stageId: 'sketch', category: 'quality', label: 'Marcas', fieldPath: 'appearance.marks' },
-  { stageId: 'sketch', category: 'style', label: 'Boceto Conceptual', fieldPath: '_static:concept art sketch, pencil linework, rough outline' },
+  { stageId: 'sketch', category: 'style', label: 'Boceto Conceptual', fieldPath: '_static:boceto de arte conceptual, trazos de lápiz, contorno preliminar' },
 
   // Turnaround
-  { stageId: 'turnaround', category: 'camera', label: 'Vista Frontal', fieldPath: '_static:front view, facing camera' },
-  { stageId: 'turnaround', category: 'camera', label: 'Vista Lateral', fieldPath: '_static:side view, profile view' },
-  { stageId: 'turnaround', category: 'camera', label: 'Vista Trasera', fieldPath: '_static:back view, rear view' },
-  { stageId: 'turnaround', category: 'camera', label: 'Vista 3/4', fieldPath: '_static:three quarter view, 3/4 angle' },
-  { stageId: 'turnaround', category: 'distance', label: 'Cuerpo Completo', fieldPath: '_static:full body shot, character turnaround sheet' },
+  { stageId: 'turnaround', category: 'camera', label: 'Vista Frontal', fieldPath: '_static:vista frontal, de frente a la cámara' },
+  { stageId: 'turnaround', category: 'camera', label: 'Vista Lateral', fieldPath: '_static:vista lateral, perfil' },
+  { stageId: 'turnaround', category: 'camera', label: 'Vista Trasera', fieldPath: '_static:vista posterior, vista desde atrás' },
+  { stageId: 'turnaround', category: 'camera', label: 'Vista 3/4', fieldPath: '_static:vista en tres cuartos, ángulo de tres cuartos' },
+  { stageId: 'turnaround', category: 'distance', label: 'Cuerpo Completo', fieldPath: '_static:personaje de cuerpo completo, hoja de vistas del personaje' },
 
   // Color
   { stageId: 'color', category: 'mood', label: 'Color Primario', fieldPath: 'colors.primary' },
   { stageId: 'color', category: 'mood', label: 'Color Secundario', fieldPath: 'colors.secondary' },
   { stageId: 'color', category: 'mood', label: 'Color de Acento', fieldPath: 'colors.accent' },
   { stageId: 'color', category: 'quality', label: 'Saturación', fieldPath: 'colors.saturation' },
-  { stageId: 'color', category: 'style', label: 'Paleta de Colores', fieldPath: '_static:vibrant color palette, harmonious colors' },
+  { stageId: 'color', category: 'style', label: 'Paleta de Colores', fieldPath: '_static:paleta de colores vibrante y armoniosa' },
 
   // Expresiones
   { stageId: 'expresiones', category: 'quality', label: 'Mandíbula', fieldPath: 'appearance.jaw' },
@@ -119,7 +121,7 @@ export const STAGE_EXTRACTION_RULES: StageExtractionRule[] = [
   { stageId: 'poses', category: 'quality', label: 'Objetos Mágicos', fieldPath: 'equipment.magicItems' },
   { stageId: 'poses', category: 'quality', label: 'Tecnología', fieldPath: 'equipment.technology' },
 
-  // Render Final
+  // Ilustración final
   { stageId: 'render-final', category: 'quality', label: 'Profesión', fieldPath: 'general.profession' },
   { stageId: 'render-final', category: 'quality', label: 'Especie', fieldPath: 'general.species' },
   { stageId: 'render-final', category: 'quality', label: 'Cabello', fieldPath: 'appearance.hair.style' },

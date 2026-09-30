@@ -1,28 +1,30 @@
 import type { LibraryItem } from '@/types/library'
 
+export const conceptArtPromptValue = 'arte conceptual para una lámina de diseño de personaje: vista principal de cuerpo completo con silueta y proporciones claras; rasgos distintivos del rostro, vestuario y equipo; paleta cromática y materiales; incluye variaciones y vistas frontal, lateral y trasera cuando ayuden a comparar; añade anotaciones breves para explicar detalles clave. Acabado profesional.'
+
 export const styleLibrary: LibraryItem[] = [
-  { id: 'anime', category: 'style', name: 'Anime', tags: ['anime', 'japonés'], promptValue: 'anime style, cel shading, vibrant colors' },
-  { id: 'semi-realistic', category: 'style', name: 'Semi Realista', tags: ['realista', 'semi'], promptValue: 'semi-realistic, detailed rendering' },
-  { id: 'comic', category: 'style', name: 'Cómic', tags: ['cómic', 'marvel', 'dc'], promptValue: 'comic book style, bold lines, halftone dots' },
-  { id: 'disney', category: 'style', name: 'Disney', tags: ['disney', 'cartoon'], promptValue: 'Disney style, 3D cartoon, expressive features' },
-  { id: 'pixar', category: 'style', name: 'Pixar', tags: ['pixar', '3d'], promptValue: 'Pixar style, 3D render, soft lighting' },
-  { id: 'arcane', category: 'style', name: 'Arcane', tags: ['arcane', 'league'], promptValue: 'Arcane style, painterly textures, stylized realism' },
-  { id: 'final-fantasy', category: 'style', name: 'Final Fantasy', tags: ['ff', 'square'], promptValue: 'Final Fantasy style, detailed fantasy design' },
-  { id: 'dark-fantasy', category: 'style', name: 'Fantasía Oscura', tags: ['oscuro', 'gótico'], promptValue: 'dark fantasy, ominous atmosphere, muted tones' },
-  { id: 'ghibli', category: 'style', name: 'Studio Ghibli', tags: ['ghibli', 'miyazaki'], promptValue: 'Studio Ghibli style, soft watercolor, whimsical' },
-  { id: 'cyberpunk', category: 'style', name: 'Cyberpunk', tags: ['cyber', 'neón', 'sci-fi'], promptValue: 'cyberpunk style, neon lights, futuristic' },
-  { id: 'steampunk', category: 'style', name: 'Steampunk', tags: ['steam', 'victoriano'], promptValue: 'steampunk style, brass gears, Victorian aesthetic' },
-  { id: 'dieselpunk', category: 'style', name: 'Dieselpunk', tags: ['diesel', 'retro'], promptValue: 'dieselpunk style, industrial, retro-futuristic' },
-  { id: 'watercolor', category: 'style', name: 'Acuarela', tags: ['pintura', 'tradicional'], promptValue: 'watercolor painting, soft edges, flowing colors' },
-  { id: 'oil-painting', category: 'style', name: 'Pintura al Óleo', tags: ['pintura', 'clásica'], promptValue: 'oil painting, rich textures, classical technique' },
-  { id: 'sketch', category: 'style', name: 'Boceto', tags: ['dibujo', 'lápiz'], promptValue: 'pencil sketch, hand-drawn, rough lines' },
-  { id: 'ink', category: 'style', name: 'Tinta', tags: ['tinta', 'blanco-negro'], promptValue: 'ink illustration, high contrast, detailed linework' },
-  { id: 'pixel-art', category: 'style', name: 'Pixel Art', tags: ['pixel', 'retro', '8bit'], promptValue: 'pixel art, 16-bit style, retro gaming' },
-  { id: 'low-poly', category: 'style', name: 'Low Poly', tags: ['3d', 'geométrico'], promptValue: 'low poly style, geometric shapes, minimalist 3D' },
-  { id: 'cell-shading', category: 'style', name: 'Cel Shading', tags: ['cel', 'toon'], promptValue: 'cel shading, flat colors, bold outlines' },
-  { id: 'photorealistic', category: 'style', name: 'Fotorrealista', tags: ['foto', 'real'], promptValue: 'photorealistic, hyper detailed, 8K resolution' },
-  { id: 'fantasy-illustration', category: 'style', name: 'Ilustración de Fantasía', tags: ['fantasía', 'arte'], promptValue: 'fantasy illustration, epic, detailed environment' },
-  { id: 'concept-art', category: 'style', name: 'Concept Art', tags: ['concepto', 'diseño'], promptValue: 'concept art, character design sheet, professional' },
+  { id: 'anime', category: 'style', name: 'Anime', tags: ['anime', 'japonés'], promptValue: 'estilo anime, sombreado por celdas, colores vibrantes' },
+  { id: 'semi-realistic', category: 'style', name: 'Semirrealista', tags: ['realista', 'semi'], promptValue: 'estilo semirrealista, acabado detallado' },
+  { id: 'comic', category: 'style', name: 'Cómic', tags: ['cómic', 'Marvel', 'DC'], promptValue: 'estilo de cómic, líneas marcadas, trama de semitonos' },
+  { id: 'disney', category: 'style', name: 'Disney', tags: ['Disney', 'dibujo animado'], promptValue: 'estilo Disney, dibujo animado en 3D, rasgos expresivos' },
+  { id: 'pixar', category: 'style', name: 'Pixar', tags: ['Pixar', '3D'], promptValue: 'estilo Pixar, renderizado en 3D, iluminación suave' },
+  { id: 'arcane', category: 'style', name: 'Arcane', tags: ['Arcane', 'videojuego'], promptValue: 'estilo Arcane, texturas pictóricas, realismo estilizado' },
+  { id: 'final-fantasy', category: 'style', name: 'Final Fantasy', tags: ['FF', 'Square Enix'], promptValue: 'estilo Final Fantasy, diseño fantástico detallado' },
+  { id: 'dark-fantasy', category: 'style', name: 'Fantasía oscura', tags: ['oscuro', 'gótico'], promptValue: 'fantasía oscura, atmósfera ominosa, tonos apagados' },
+  { id: 'ghibli', category: 'style', name: 'Studio Ghibli', tags: ['Ghibli', 'Miyazaki'], promptValue: 'estilo Studio Ghibli, acuarela suave, atmósfera fantástica' },
+  { id: 'cyberpunk', category: 'style', name: 'Ciberpunk', tags: ['cibernética', 'neón', 'ciencia ficción'], promptValue: 'estética ciberpunk, luces de neón, ambiente futurista' },
+  { id: 'steampunk', category: 'style', name: 'Fantasía de vapor', tags: ['vapor', 'victoriano'], promptValue: 'estética de fantasía de vapor, engranajes de latón, estilo victoriano' },
+  { id: 'dieselpunk', category: 'style', name: 'Fantasía diésel', tags: ['diésel', 'retro'], promptValue: 'estética retroindustrial, ambiente industrial, aire futurista retro' },
+  { id: 'watercolor', category: 'style', name: 'Acuarela', tags: ['pintura', 'tradicional'], promptValue: 'pintura en acuarela, bordes suaves, colores fluidos' },
+  { id: 'oil-painting', category: 'style', name: 'Pintura al óleo', tags: ['pintura', 'clásica'], promptValue: 'pintura al óleo, texturas ricas, técnica clásica' },
+  { id: 'sketch', category: 'style', name: 'Boceto', tags: ['dibujo', 'lápiz'], promptValue: 'boceto a lápiz, dibujo a mano, trazos preliminares' },
+  { id: 'ink', category: 'style', name: 'Tinta', tags: ['tinta', 'blanco y negro'], promptValue: 'ilustración a tinta, alto contraste, entintado detallado' },
+  { id: 'pixel-art', category: 'style', name: 'Arte pixelado', tags: ['píxel', 'retro', '8 bits'], promptValue: 'arte pixelado, estilo de 16 bits, estética de videojuegos retro' },
+  { id: 'low-poly', category: 'style', name: 'Bajo poligonaje', tags: ['3D', 'geométrico'], promptValue: 'estilo de bajo poligonaje, formas geométricas, 3D minimalista' },
+  { id: 'cell-shading', category: 'style', name: 'Sombreado por celdas', tags: ['celdas', 'dibujo animado'], promptValue: 'sombreado por celdas, colores planos, contornos marcados' },
+  { id: 'photorealistic', category: 'style', name: 'Fotorrealista', tags: ['fotografía', 'realismo'], promptValue: 'fotorrealista, detalle extremo, resolución 8K' },
+  { id: 'fantasy-illustration', category: 'style', name: 'Ilustración fantástica', tags: ['fantasía', 'arte'], promptValue: 'ilustración fantástica, épica, entorno detallado' },
+  { id: 'concept-art', category: 'style', name: 'Arte conceptual', tags: ['concepto', 'diseño'], promptValue: conceptArtPromptValue },
 ]
 
 export const cameraLibrary: LibraryItem[] = [
@@ -41,11 +43,11 @@ export const cameraLibrary: LibraryItem[] = [
 ]
 
 export const lensLibrary: LibraryItem[] = [
-  { id: '24mm', category: 'lens', name: '24mm Gran Angular', tags: ['lente', 'angular'], promptValue: '24mm wide angle lens' },
-  { id: '35mm', category: 'lens', name: '35mm', tags: ['lente', 'estándar'], promptValue: '35mm lens' },
-  { id: '50mm', category: 'lens', name: '50mm', tags: ['lente', 'retrato'], promptValue: '50mm lens, natural perspective' },
-  { id: '85mm', category: 'lens', name: '85mm Retrato', tags: ['lente', 'retrato', 'bokeh'], promptValue: '85mm portrait lens, shallow depth of field' },
-  { id: '135mm', category: 'lens', name: '135mm Telephoto', tags: ['lente', 'tele'], promptValue: '135mm telephoto lens, compressed perspective' },
+  { id: '24mm', category: 'lens', name: 'Gran angular de 24 mm', tags: ['lente', 'angular'], promptValue: 'objetivo gran angular de 24 mm' },
+  { id: '35mm', category: 'lens', name: '35 mm', tags: ['lente', 'estándar'], promptValue: 'objetivo de 35 mm' },
+  { id: '50mm', category: 'lens', name: '50 mm', tags: ['lente', 'retrato'], promptValue: 'objetivo de 50 mm, perspectiva natural' },
+  { id: '85mm', category: 'lens', name: 'Teleobjetivo para retrato de 85 mm', tags: ['lente', 'retrato', 'desenfoque'], promptValue: 'objetivo para retrato de 85 mm, poca profundidad de campo' },
+  { id: '135mm', category: 'lens', name: 'Teleobjetivo de 135 mm', tags: ['lente', 'teleobjetivo'], promptValue: 'teleobjetivo de 135 mm, perspectiva comprimida' },
 ]
 
 export const distanceLibrary: LibraryItem[] = [
@@ -62,63 +64,63 @@ export const distanceLibrary: LibraryItem[] = [
 ]
 
 export const lightingLibrary: LibraryItem[] = [
-  { id: 'studio', category: 'lighting', name: 'Iluminación de Estudio', tags: ['luz', 'estudio'], promptValue: 'studio lighting, professional' },
-  { id: 'soft', category: 'lighting', name: 'Luz Suave', tags: ['luz', 'suave'], promptValue: 'soft diffused lighting, gentle shadows' },
-  { id: 'hard', category: 'lighting', name: 'Luz Dura', tags: ['luz', 'dramática'], promptValue: 'hard dramatic lighting, strong shadows' },
-  { id: 'rembrandt', category: 'lighting', name: 'Rembrandt', tags: ['luz', 'clásica'], promptValue: 'Rembrandt lighting, triangle of light on cheek' },
-  { id: 'butterfly', category: 'lighting', name: 'Mariposa', tags: ['luz', 'belleza'], promptValue: 'butterfly lighting, beauty lighting' },
-  { id: 'split', category: 'lighting', name: 'Luz Dividida', tags: ['luz', 'mitad'], promptValue: 'split lighting, half face illuminated' },
-  { id: 'neon', category: 'lighting', name: 'Neón', tags: ['luz', 'cyber', 'colorida'], promptValue: 'neon lighting, colorful glow' },
-  { id: 'moonlight', category: 'lighting', name: 'Luz de Luna', tags: ['luz', 'noche'], promptValue: 'moonlight, cool blue tones, night scene' },
-  { id: 'golden-hour', category: 'lighting', name: 'Hora Dorada', tags: ['luz', 'cálida', 'atardecer'], promptValue: 'golden hour lighting, warm orange tones' },
-  { id: 'volumetric', category: 'lighting', name: 'Volumétrica', tags: ['luz', 'niebla', 'rayos'], promptValue: 'volumetric lighting, god rays, atmospheric' },
-  { id: 'backlight', category: 'lighting', name: 'Contraluz', tags: ['luz', 'borde'], promptValue: 'backlight, rim lighting, silhouette edges' },
-  { id: 'ambient', category: 'lighting', name: 'Ambiente', tags: ['luz', 'natural'], promptValue: 'ambient lighting, natural illumination' },
+  { id: 'studio', category: 'lighting', name: 'Iluminación de estudio', tags: ['luz', 'estudio'], promptValue: 'iluminación de estudio, acabado profesional' },
+  { id: 'soft', category: 'lighting', name: 'Luz suave', tags: ['luz', 'suave'], promptValue: 'iluminación difusa y suave, sombras delicadas' },
+  { id: 'hard', category: 'lighting', name: 'Luz dura', tags: ['luz', 'dramática'], promptValue: 'iluminación dramática y dura, sombras marcadas' },
+  { id: 'rembrandt', category: 'lighting', name: 'Luz Rembrandt', tags: ['luz', 'clásica'], promptValue: 'iluminación Rembrandt, triángulo de luz en la mejilla' },
+  { id: 'butterfly', category: 'lighting', name: 'Luz mariposa', tags: ['luz', 'retrato'], promptValue: 'iluminación mariposa, luz de belleza' },
+  { id: 'split', category: 'lighting', name: 'Luz dividida', tags: ['luz', 'mitad'], promptValue: 'iluminación dividida, mitad del rostro iluminada' },
+  { id: 'neon', category: 'lighting', name: 'Luz de neón', tags: ['luz', 'ciberpunk', 'colorida'], promptValue: 'iluminación de neón, resplandor colorido' },
+  { id: 'moonlight', category: 'lighting', name: 'Luz de luna', tags: ['luz', 'noche'], promptValue: 'luz de luna, tonos azules fríos, escena nocturna' },
+  { id: 'golden-hour', category: 'lighting', name: 'Hora dorada', tags: ['luz', 'cálida', 'atardecer'], promptValue: 'iluminación de hora dorada, tonos cálidos anaranjados' },
+  { id: 'volumetric', category: 'lighting', name: 'Iluminación volumétrica', tags: ['luz', 'niebla', 'rayos'], promptValue: 'iluminación volumétrica, rayos de luz, atmósfera envolvente' },
+  { id: 'backlight', category: 'lighting', name: 'Contraluz', tags: ['luz', 'contorno'], promptValue: 'contraluz, luz de contorno, silueta perfilada' },
+  { id: 'ambient', category: 'lighting', name: 'Luz ambiental', tags: ['luz', 'natural'], promptValue: 'iluminación ambiental, luz natural' },
 ]
 
 export const compositionLibrary: LibraryItem[] = [
-  { id: 'centered', category: 'composition', name: 'Centrada', tags: ['composición', 'simétrica'], promptValue: 'centered composition, symmetrical' },
-  { id: 'golden-ratio', category: 'composition', name: 'Proporción Áurea', tags: ['composición', 'clásica'], promptValue: 'golden ratio composition' },
-  { id: 'rule-of-thirds', category: 'composition', name: 'Regla de Tercios', tags: ['composición', 'estándar'], promptValue: 'rule of thirds composition' },
-  { id: 'diagonal', category: 'composition', name: 'Diagonal', tags: ['composición', 'dinámica'], promptValue: 'diagonal composition, dynamic lines' },
-  { id: 'dynamic', category: 'composition', name: 'Dinámica', tags: ['composición', 'acción'], promptValue: 'dynamic composition, movement' },
-  { id: 'symmetry', category: 'composition', name: 'Simetría', tags: ['composición', 'equilibrada'], promptValue: 'perfect symmetry, balanced composition' },
-  { id: 'negative-space', category: 'composition', name: 'Espacio Negativo', tags: ['composición', 'minimalista'], promptValue: 'negative space, minimalist composition' },
+  { id: 'centered', category: 'composition', name: 'Centrada', tags: ['composición', 'simétrica'], promptValue: 'composición centrada y simétrica' },
+  { id: 'golden-ratio', category: 'composition', name: 'Proporción áurea', tags: ['composición', 'clásica'], promptValue: 'composición basada en la proporción áurea' },
+  { id: 'rule-of-thirds', category: 'composition', name: 'Regla de los tercios', tags: ['composición', 'estándar'], promptValue: 'composición según la regla de los tercios' },
+  { id: 'diagonal', category: 'composition', name: 'Diagonal', tags: ['composición', 'dinámica'], promptValue: 'composición diagonal, líneas dinámicas' },
+  { id: 'dynamic', category: 'composition', name: 'Dinámica', tags: ['composición', 'acción'], promptValue: 'composición dinámica, sensación de movimiento' },
+  { id: 'symmetry', category: 'composition', name: 'Simetría', tags: ['composición', 'equilibrada'], promptValue: 'simetría perfecta, composición equilibrada' },
+  { id: 'negative-space', category: 'composition', name: 'Espacio negativo', tags: ['composición', 'minimalista'], promptValue: 'espacio negativo, composición minimalista' },
 ]
 
 export const poseLibrary: LibraryItem[] = [
-  { id: 'idle', category: 'pose', name: 'Idle', tags: ['pose', 'de pie'], promptValue: 'standing idle pose, relaxed' },
-  { id: 'walk', category: 'pose', name: 'Caminar', tags: ['pose', 'movimiento'], promptValue: 'walking pose, mid-stride' },
-  { id: 'run', category: 'pose', name: 'Correr', tags: ['pose', 'acción'], promptValue: 'running pose, dynamic movement' },
-  { id: 'attack', category: 'pose', name: 'Atacar', tags: ['pose', 'combate'], promptValue: 'combat attack pose, aggressive stance' },
-  { id: 'magic', category: 'pose', name: 'Lanzar Hechizo', tags: ['pose', 'magia'], promptValue: 'casting spell pose, hands raised, magical energy' },
-  { id: 'death', category: 'pose', name: 'Muerte', tags: ['pose', 'caído'], promptValue: 'fallen pose, defeated' },
-  { id: 'jump', category: 'pose', name: 'Saltar', tags: ['pose', 'aire'], promptValue: 'jumping pose, airborne' },
-  { id: 'victory', category: 'pose', name: 'Victoria', tags: ['pose', 'celebrar'], promptValue: 'victory pose, triumphant stance' },
-  { id: 'sit', category: 'pose', name: 'Sentarse', tags: ['pose', 'descanso'], promptValue: 'sitting pose, resting' },
-  { id: 'fly', category: 'pose', name: 'Volar', tags: ['pose', 'aéreo'], promptValue: 'flying pose, aerial stance' },
+  { id: 'idle', category: 'pose', name: 'En reposo', tags: ['pose', 'de pie'], promptValue: 'postura de pie en reposo, relajada' },
+  { id: 'walk', category: 'pose', name: 'Caminar', tags: ['pose', 'movimiento'], promptValue: 'postura al caminar, paso en movimiento' },
+  { id: 'run', category: 'pose', name: 'Correr', tags: ['pose', 'acción'], promptValue: 'postura al correr, movimiento dinámico' },
+  { id: 'attack', category: 'pose', name: 'Atacar', tags: ['pose', 'combate'], promptValue: 'postura de ataque, actitud agresiva' },
+  { id: 'magic', category: 'pose', name: 'Lanzar un hechizo', tags: ['pose', 'magia'], promptValue: 'postura al lanzar un hechizo, manos alzadas, energía mágica' },
+  { id: 'death', category: 'pose', name: 'Caído', tags: ['pose', 'derrota'], promptValue: 'postura de personaje caído, derrotado' },
+  { id: 'jump', category: 'pose', name: 'Saltar', tags: ['pose', 'aire'], promptValue: 'postura de salto, en el aire' },
+  { id: 'victory', category: 'pose', name: 'Victoria', tags: ['pose', 'celebración'], promptValue: 'postura triunfal de victoria' },
+  { id: 'sit', category: 'pose', name: 'Sentarse', tags: ['pose', 'descanso'], promptValue: 'postura sentada, en descanso' },
+  { id: 'fly', category: 'pose', name: 'Volar', tags: ['pose', 'aéreo'], promptValue: 'postura de vuelo, en el aire' },
 ]
 
 export const expressionLibrary: LibraryItem[] = [
-  { id: 'neutral', category: 'expression', name: 'Neutral', tags: ['cara', 'calma'], promptValue: 'neutral expression, calm face' },
-  { id: 'happy', category: 'expression', name: 'Feliz', tags: ['cara', 'alegría'], promptValue: 'happy expression, smiling' },
-  { id: 'angry', category: 'expression', name: 'Enfadado', tags: ['cara', 'ira'], promptValue: 'angry expression, furrowed brows' },
-  { id: 'sad', category: 'expression', name: 'Triste', tags: ['cara', 'pena'], promptValue: 'sad expression, melancholic' },
-  { id: 'fear', category: 'expression', name: 'Miedo', tags: ['cara', 'asustado'], promptValue: 'fearful expression, wide eyes' },
-  { id: 'surprise', category: 'expression', name: 'Sorpresa', tags: ['cara', 'impacto'], promptValue: 'surprised expression, raised eyebrows' },
-  { id: 'laugh', category: 'expression', name: 'Reír', tags: ['cara', 'alegría'], promptValue: 'laughing expression, open mouth' },
-  { id: 'scream', category: 'expression', name: 'Gritar', tags: ['cara', 'intenso'], promptValue: 'screaming expression, mouth wide open' },
+  { id: 'neutral', category: 'expression', name: 'Neutra', tags: ['rostro', 'calma'], promptValue: 'expresión neutra, rostro tranquilo' },
+  { id: 'happy', category: 'expression', name: 'Feliz', tags: ['rostro', 'alegría'], promptValue: 'expresión feliz, sonrisa' },
+  { id: 'angry', category: 'expression', name: 'Enfadada', tags: ['rostro', 'ira'], promptValue: 'expresión de enfado, cejas fruncidas' },
+  { id: 'sad', category: 'expression', name: 'Triste', tags: ['rostro', 'pena'], promptValue: 'expresión triste y melancólica' },
+  { id: 'fear', category: 'expression', name: 'Asustada', tags: ['rostro', 'miedo'], promptValue: 'expresión de miedo, ojos muy abiertos' },
+  { id: 'surprise', category: 'expression', name: 'Sorpresa', tags: ['rostro', 'impacto'], promptValue: 'expresión de sorpresa, cejas levantadas' },
+  { id: 'laugh', category: 'expression', name: 'Risa', tags: ['rostro', 'alegría'], promptValue: 'expresión de risa, boca abierta' },
+  { id: 'scream', category: 'expression', name: 'Grito', tags: ['rostro', 'intensidad'], promptValue: 'expresión de grito, boca muy abierta' },
 ]
 
 export const moodLibrary: LibraryItem[] = [
-  { id: 'heroic', category: 'mood', name: 'Heroico', tags: ['ambiente', 'valiente'], promptValue: 'heroic mood, epic, majestic' },
-  { id: 'dark', category: 'mood', name: 'Oscuro', tags: ['ambiente', 'gótico'], promptValue: 'dark mood, ominous, foreboding' },
-  { id: 'mystical', category: 'mood', name: 'Místico', tags: ['ambiente', 'magia'], promptValue: 'mystical mood, ethereal, otherworldly' },
-  { id: 'peaceful', category: 'mood', name: 'Pacífico', tags: ['ambiente', 'calma'], promptValue: 'peaceful mood, serene, tranquil' },
-  { id: 'dramatic', category: 'mood', name: 'Dramático', tags: ['ambiente', 'intenso'], promptValue: 'dramatic mood, intense, cinematic' },
-  { id: 'whimsical', category: 'mood', name: 'Caprichoso', tags: ['ambiente', 'juguetón'], promptValue: 'whimsical mood, playful, charming' },
-  { id: 'epic', category: 'mood', name: 'Épico', tags: ['ambiente', 'grandioso'], promptValue: 'epic mood, grand scale, monumental' },
-  { id: 'melancholic', category: 'mood', name: 'Melancólico', tags: ['ambiente', 'triste'], promptValue: 'melancholic mood, nostalgic, bittersweet' },
+  { id: 'heroic', category: 'mood', name: 'Heroico', tags: ['ambiente', 'valentía'], promptValue: 'ambiente heroico, épico y majestuoso' },
+  { id: 'dark', category: 'mood', name: 'Oscuro', tags: ['ambiente', 'gótico'], promptValue: 'ambiente oscuro, ominoso e inquietante' },
+  { id: 'mystical', category: 'mood', name: 'Místico', tags: ['ambiente', 'magia'], promptValue: 'ambiente místico, etéreo y sobrenatural' },
+  { id: 'peaceful', category: 'mood', name: 'Pacífico', tags: ['ambiente', 'calma'], promptValue: 'ambiente pacífico, sereno y tranquilo' },
+  { id: 'dramatic', category: 'mood', name: 'Dramático', tags: ['ambiente', 'intensidad'], promptValue: 'ambiente dramático, intenso y cinematográfico' },
+  { id: 'whimsical', category: 'mood', name: 'Fantasioso', tags: ['ambiente', 'juguetón'], promptValue: 'ambiente fantasioso, juguetón y encantador' },
+  { id: 'epic', category: 'mood', name: 'Épico', tags: ['ambiente', 'grandioso'], promptValue: 'ambiente épico, escala grandiosa y monumental' },
+  { id: 'melancholic', category: 'mood', name: 'Melancólico', tags: ['ambiente', 'tristeza'], promptValue: 'ambiente melancólico, nostálgico y agridulce' },
 ]
 
 export const allLibraries = [

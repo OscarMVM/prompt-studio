@@ -530,7 +530,7 @@ export function CharacterEditor() {
       <Tabs defaultValue="general">
         <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="general">
-            <User className="mr-1 h-3 w-3" /> General
+            <User className="mr-1 h-3 w-3" /> Datos generales
           </TabsTrigger>
           <TabsTrigger value="appearance">
             <Eye className="mr-1 h-3 w-3" /> Apariencia
