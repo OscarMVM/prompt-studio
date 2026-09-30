@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -41,13 +40,6 @@ function LibraryGrid({ items }: { items: LibraryItem[] }) {
               <p className="text-xs leading-relaxed text-muted-foreground">{item.description}</p>
             )}
             <p className="text-xs text-muted-foreground">{item.promptValue}</p>
-            <div className="flex flex-wrap gap-1">
-              {item.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-[10px]">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
           </CardContent>
         </Card>
       ))}
@@ -64,8 +56,7 @@ export function LibraryPage() {
           (item) =>
             item.name.toLowerCase().includes(search.toLowerCase()) ||
             item.description?.toLowerCase().includes(search.toLowerCase()) ||
-            item.promptValue.toLowerCase().includes(search.toLowerCase()) ||
-            item.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+            item.promptValue.toLowerCase().includes(search.toLowerCase())
         )
       : items
 

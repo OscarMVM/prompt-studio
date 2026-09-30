@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Wand2, RefreshCw, ChevronRight, Pencil } from 'lucide-react'
+import { RefreshCw, ChevronRight, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useCharacterStore } from '@/stores/characterStore'
@@ -10,7 +10,6 @@ export function WorkflowHeader() {
   const {
     workflow,
     activeStageId,
-    autoGenerateAllStages,
     resetStage,
   } = useWorkflowStore()
 
@@ -39,7 +38,7 @@ export function WorkflowHeader() {
           render={<Link to={`/characters/${workflow.characterId}`} />}
         >
           <Pencil className="mr-1 h-3 w-3" />
-          Editar
+          Editar personaje
         </Button>
       </div>
 
@@ -54,15 +53,6 @@ export function WorkflowHeader() {
           Resetear módulo
         </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 whitespace-nowrap sm:flex-none"
-          onClick={autoGenerateAllStages}
-        >
-          <Wand2 className="mr-1 h-3 w-3" />
-          Generar módulos desde Biblia
-        </Button>
       </div>
     </div>
   )

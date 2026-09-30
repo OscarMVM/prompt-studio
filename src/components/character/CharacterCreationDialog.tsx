@@ -35,6 +35,7 @@ import {
   Shirt,
   Palette,
   Check,
+  Info,
 } from 'lucide-react'
 
 interface CharacterCreationDialogProps {
@@ -442,7 +443,7 @@ function StepColors({
         </p>
         <div className="space-y-3">
           <Tooltip>
-            <TooltipTrigger render={<label className="flex items-center gap-2 cursor-pointer" />}>
+            <TooltipTrigger render={<label className="flex items-center gap-2 cursor-help" />}>
               <input
                 type="checkbox"
                 checked={refs?.hasReferences || false}
@@ -450,6 +451,7 @@ function StepColors({
                 className="rounded border-input"
               />
               <span className="text-sm">Voy a proporcionar referencias visuales</span>
+              <Info className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
             </TooltipTrigger>
             <TooltipContent>Activa esta opción si adjuntarás imágenes para orientar el diseño del personaje.</TooltipContent>
           </Tooltip>

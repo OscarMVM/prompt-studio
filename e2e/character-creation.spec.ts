@@ -12,6 +12,42 @@ async function fillField(page: Page, label: string, value: string) {
   await field.fill(value)
 }
 
+async function selectStage(page: Page, label: string) {
+  const stageButton = page.getByRole('button', { name: label, exact: true })
+  if (await stageButton.count() && await stageButton.first().isVisible()) {
+    await stageButton.first().click()
+    return
+  }
+
+  const stageSelect = page.getByRole('combobox').first()
+  if (await stageSelect.count()) {
+    await stageSelect.click()
+    await page.getByRole('option', { name: label, exact: true }).click()
+    return
+  }
+}
+
+async function showEditorOnMobile(page: Page) {
+  const editorTab = page.getByRole('tab', { name: 'Editor', exact: true })
+  if (await editorTab.count()) await editorTab.click()
+}
+
+async function getPromptPreview(page: Page) {
+  const promptTab = page.getByRole('tab', { name: 'Prompt', exact: true })
+  if (await promptTab.count()) await promptTab.click()
+
+  return page
+    .locator('[data-slot="card"]')
+    .filter({ hasText: 'Vista Previa' })
+    .locator('p.whitespace-pre-wrap')
+}
+
+async function fillNegativePrompt(page: Page, value: string) {
+  const field = page.getByPlaceholder('Elementos a evitar...')
+  await expect(field).toHaveCount(1)
+  await field.fill(value)
+}
+
 test('crea un monstruo metálico desde el asistente', async ({ page }) => {
   await page.goto('/')
   await page.getByText('Comienza a diseñar un nuevo personaje desde cero', { exact: true }).click()
@@ -107,16 +143,67 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/characters\/[^/]+\/workflow$/)
   await expect(page.getByRole('link', { name: 'Ferrum', exact: true })).toBeVisible()
-  await page.getByRole('tab', { name: 'Prompt', exact: true }).click()
-  const generatedPrompt = page
-    .getByRole('tabpanel', { name: 'Prompt' })
-    .locator('p.whitespace-pre-wrap')
-  await expect(generatedPrompt).toContainText('cabello Filamentos finos de cobre')
-  await expect(generatedPrompt).toContainText('ojos Ópticas circulares Ámbar luminoso')
-  await expect(generatedPrompt).not.toContainText(/\b(?:hair|eyes|scarred|tattoos|reference image provided)\b/i)
+  const generatedPrompt = await getPromptPreview(page)
+  await expect(generatedPrompt).toContainText('Cabello: Filamentos finos de cobre, Cobre oxidado')
+  await expect(generatedPrompt).toContainText('Ojos: Ópticas circulares, Ámbar luminoso')
+  await expect(generatedPrompt).not.toContainText(
+    /\b(?:hair|eyes|scarred|tattoos|reference image provided|technology|military|serious|mystical)\b/i
+  )
   await expect(generatedPrompt).toContainText('Genera una imagen conceptual')
   await expect(generatedPrompt).toContainText('vista principal de cuerpo completo con silueta y proporciones claras')
+  await expect(generatedPrompt).toContainText(/^Información del personaje: /m)
   await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
+
+  const characterFields = [
+    'Edad: Siglos',
+    'Pestañas: No tiene',
+    'Cejas: Ranuras de acero',
+    'Pecas: Motas de óxido',
+    'Cabeza: Yelmo de acero con visera estrecha',
+    'Piernas de ropa: Grebas articuladas de hierro',
+    'Calzado: Botas pesadas con suela de hierro',
+    'Guantes: Guanteletes de cinco dedos mecánicos',
+    'Capa: Capa corta de lona gris',
+    'Cinturón: Cinturón con hebilla de cobre',
+    'Joyería: Amuleto con un fragmento de ámbar',
+    'Accesorios: Linterna fijada al hombro',
+    'Escudos: Escudo redondo de acero',
+    'Herramientas: Juego de reparación mecánica',
+    'Mochila: Mochila de lona reforzada',
+    'Instrumentos: Diapasón de calibración',
+    'Objetos mágicos: Núcleo de energía arcana',
+    'Tecnología: Engranajes internos y ópticas de precisión',
+    'Mascotas: Cuervo mecánico explorador',
+    'Temperatura: Fría',
+    'Contraste: Alto',
+    'Saturación: Baja',
+  ]
+  for (const field of characterFields) {
+    await expect(generatedPrompt).toContainText(field)
+  }
+
+  for (const field of [
+    'Alias',
+    'Rol',
+    'Personalidad',
+    'Historia',
+    'Motivaciones',
+    'Miedos',
+    'Virtudes',
+    'Defectos',
+    'Alineación',
+  ]) {
+    await expect(generatedPrompt).not.toContainText(new RegExp(`(?:^|;\\s*)${field}:`))
+  }
+
+  await page.getByText('Prompt Negativo', { exact: true }).hover()
+  await expect(page.getByText(/Se añade al final del prompt/)).toBeVisible()
+  await fillNegativePrompt(page, 'el color rojo')
+  await expect(generatedPrompt).toContainText('Debes evitar: el color rojo.')
+  await fillNegativePrompt(page, 'el color rojo\ntexto en pantalla')
+  await expect(generatedPrompt).toContainText('Debes evitar: el color rojo, texto en pantalla.')
+  await fillNegativePrompt(page, '')
+  await expect(generatedPrompt).not.toContainText('Debes evitar')
 
   if (env.PLAYWRIGHT_KEEP_OPEN === '1') {
     test.setTimeout(0)
@@ -125,33 +212,69 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
     return
   }
 
+  const noTextLimit = 'libre de texto y anotaciones'
+  const conceptArtPhrases = [
+    'vista principal de cuerpo completo con silueta y proporciones claras',
+    'paleta cromática y materiales',
+    'variaciones y vistas frontal, lateral y trasera',
+    'anotaciones breves para explicar detalles clave',
+  ]
   const stagePrompts = [
-    { label: 'Concepto y Dirección', opening: 'Genera una imagen conceptual', content: 'Ferrum' },
-    { label: 'Boceto y entintado', opening: 'Genera una imagen de boceto y entintado', content: 'boceto de arte conceptual' },
-    { label: 'Vistas del Personaje', opening: 'Genera una imagen tipo hoja de referencia', content: 'vista frontal' },
-    { label: 'Paleta y Color', opening: 'Genera una imagen del personaje', content: 'paleta de colores vibrante y armoniosa' },
-    { label: 'Rostro y Expresiones', opening: 'Genera una imagen tipo hoja de expresiones', content: 'Ferrum' },
-    { label: 'Acciones y Poses', opening: 'Genera una imagen de cuerpo completo', content: 'Ferrum' },
-    { label: 'Ilustración final', opening: 'Genera una ilustración final', content: 'Ferrum' },
+    {
+      label: 'Concepto y Dirección',
+      lead: /^Genera una imagen conceptual[\s\S]*?\n\s*\nArte conceptual para una lámina/mi,
+      opening: 'Genera una imagen conceptual',
+      content: 'Ferrum',
+      forbidsText: false,
+    },
+    { label: 'Boceto y entintado', opening: 'Genera una imagen de boceto y entintado', content: 'boceto de arte conceptual', forbidsText: true },
+    { label: 'Vistas del Personaje', opening: 'Genera una imagen tipo hoja de referencia', content: 'vista frontal', forbidsText: false },
+    { label: 'Paleta y Color', opening: 'Genera una imagen del personaje', content: 'paleta de colores vibrante y armoniosa', forbidsText: true },
+    { label: 'Rostro y Expresiones', opening: 'Genera una imagen tipo hoja de expresiones', content: 'Ferrum', forbidsText: false },
+    { label: 'Acciones y Poses', opening: 'Genera una imagen de cuerpo completo', content: 'Ferrum', forbidsText: true },
+    { label: 'Ilustración final', opening: 'Genera una ilustración final', content: 'Ferrum', forbidsText: true },
   ]
 
   for (const stage of stagePrompts) {
-    await page.getByRole('combobox').click()
-    await page.getByRole('option', { name: stage.label, exact: true }).click()
+    await selectStage(page, stage.label)
+    if ('lead' in stage && stage.lead) {
+      await expect(generatedPrompt).toHaveText(stage.lead)
+    }
     await expect(generatedPrompt).toContainText(stage.opening)
     await expect(generatedPrompt).toContainText(stage.content)
+    await expect(generatedPrompt).toContainText(/^Información del personaje: /m)
     await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
+
+    if (stage.forbidsText) {
+      await expect(generatedPrompt).toContainText(noTextLimit)
+    } else {
+      await expect(generatedPrompt).not.toContainText(noTextLimit)
+    }
   }
 
-  await page.getByRole('tab', { name: 'Editor', exact: true }).click()
-  await page.getByRole('button', { name: /Arte conceptual/ }).click()
-  await page.getByRole('tab', { name: 'Prompt', exact: true }).click()
-  await expect(generatedPrompt).toContainText('vista principal de cuerpo completo con silueta y proporciones claras')
-  await expect(generatedPrompt).toContainText('paleta cromática y materiales')
-  await expect(generatedPrompt).toContainText('variaciones y vistas frontal, lateral y trasera')
-  await expect(generatedPrompt).toContainText('anotaciones breves para explicar detalles clave')
+  await fillNegativePrompt(page, 'el color rojo')
+  await expect(generatedPrompt).toContainText('Debes evitar: el color rojo.')
+  await selectStage(page, 'Concepto y Dirección')
+  await expect(generatedPrompt).not.toContainText('Debes evitar')
+  await selectStage(page, 'Ilustración final')
+  await expect(generatedPrompt).toContainText('Debes evitar: el color rojo.')
 
-  await page.getByRole('link', { name: 'Editar', exact: true }).click()
+  // El prompt de concept art se integra como encabezado de la etapa: presente
+  // sin ninguna acción del usuario y sin ofrecerse como estilo elegible.
+  await selectStage(page, 'Concepto y Dirección')
+  const conceptArtPrompt = await getPromptPreview(page)
+  for (const phrase of conceptArtPhrases) {
+    await expect(conceptArtPrompt).toContainText(phrase)
+  }
+
+  await showEditorOnMobile(page)
+  const libraryCategorySelect = page.getByRole('combobox').last()
+  await libraryCategorySelect.click()
+  await page.getByRole('option', { name: 'Estilo', exact: true }).click()
+  await expect(page.getByRole('button', { name: /Arte conceptual/ })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /^Pixar/ })).toHaveCount(1)
+
+  await page.getByRole('link', { name: 'Editar personaje', exact: true }).click()
   await page.getByRole('tab', { name: 'Ropa y Equipo', exact: true }).click()
   await expect(
     page

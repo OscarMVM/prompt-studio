@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
+import { buildCharacterContext } from '@/lib/autoGenerateStage'
 import { StageSidebar } from '@/components/workflow/StageSidebar'
 import { StageCanvas } from '@/components/workflow/StageCanvas'
 import { StagePreview } from '@/components/workflow/StagePreview'
@@ -28,6 +29,7 @@ export function WorkflowPage() {
     createWorkflow,
     activeStageId,
     setActiveStage,
+    setCharacterContext,
   } = useWorkflowStore()
 
   const character = characters.find((c) => c.id === id)
@@ -54,6 +56,12 @@ export function WorkflowPage() {
       createWorkflow(character)
     }
   }, [character, workflow, isLoading, createWorkflow])
+
+  useEffect(() => {
+    if (character && workflow) {
+      setCharacterContext(buildCharacterContext(character))
+    }
+  }, [character, workflow, setCharacterContext])
 
   if (!character) {
     return (
@@ -82,7 +90,7 @@ export function WorkflowPage() {
         </p>
       </section>
       <WorkflowHeader />
-      <div className="hidden min-h-[560px] flex-1 overflow-hidden rounded-md border bg-card 2xl:flex">
+      <div className="hidden min-h-[560px] flex-1 overflow-hidden rounded-md border bg-card xl:flex">
         <div className="w-56 shrink-0 border-r bg-card">
           <StageSidebar />
         </div>
@@ -93,7 +101,7 @@ export function WorkflowPage() {
           <StagePreview />
         </div>
       </div>
-      <div className="flex min-h-[560px] flex-1 flex-col gap-3 2xl:hidden">
+      <div className="flex min-h-[560px] flex-1 flex-col gap-3 xl:hidden">
         <Select
           value={activeStageId}
           items={STAGE_DEFINITIONS.map((definition) => ({

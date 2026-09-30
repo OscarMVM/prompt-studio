@@ -22,9 +22,7 @@ export function WorkflowExportDialog() {
   const allPrompts = generateAllPrompts()
 
   const handleCopyAll = async () => {
-    const text = allPrompts
-      .map((p) => `=== ${p.label} ===\n${p.prompt}${p.negativePrompt ? `\nNegativo: ${p.negativePrompt}` : ''}`)
-      .join('\n\n')
+    const text = allPrompts.map((p) => `=== ${p.label} ===\n${p.prompt}`).join('\n\n')
     await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -79,10 +77,6 @@ export function WorkflowExportDialog() {
       lines.push('')
       lines.push(p.prompt)
       lines.push('')
-      if (p.negativePrompt) {
-        lines.push(`**Negativo:** ${p.negativePrompt}`)
-        lines.push('')
-      }
     }
 
     const blob = new Blob([lines.join('\n')], { type: 'text/markdown' })
@@ -104,9 +98,6 @@ export function WorkflowExportDialog() {
     for (const p of allPrompts) {
       lines.push(`--- ${p.label} ---`)
       lines.push(p.prompt)
-      if (p.negativePrompt) {
-        lines.push(`Negativo: ${p.negativePrompt}`)
-      }
       lines.push('')
     }
 
