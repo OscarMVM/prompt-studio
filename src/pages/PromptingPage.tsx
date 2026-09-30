@@ -11,7 +11,6 @@ import {
   Layers3,
   MessageSquareText,
   RotateCcw,
-  Sparkles,
   Target,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -135,24 +134,20 @@ export function PromptingPage() {
             <MessageSquareText size={22} />
             <h3>Una instrucción directa</h3>
             <p>Un verbo concreto marca la tarea: resumir, comparar, traducir, ordenar o explicar.</p>
-            <div className="foundation-example">“Resume estas notas en tres ideas.”</div>
           </article>
           <article className="foundation-card foundation-image">
             <Image size={22} />
             <h3>Contexto visual</h3>
             <p>Adjunta una imagen si es parte de la tarea y señala qué necesitas observar, comparar o transformar.</p>
-            <div className="foundation-image-mark"><span /><span /><span /></div>
           </article>
           <article className="foundation-card foundation-audio">
             <AudioLines size={22} />
             <h3>Audio como material</h3>
             <p>Incluye una grabación cuando quieras transcribirla, resumirla o trabajar con lo que se dijo.</p>
-            <div className="audio-wave" aria-hidden="true">▂ ▄ ▆ ▃ ▇ ▅ ▂ ▄ ▆ ▇ ▃ ▅ ▂ ▄ ▆ ▃ ▇ ▅ ▂</div>
           </article>
         </div>
         <div className="prompt-engineering-note">
           <p>Diseñar un prompt es un proceso iterativo: empieza simple, observa la respuesta y añade solo lo que falta.</p>
-          <span className="engineering-mark"><Sparkles size={18} /></span>
         </div>
       </section>
 
@@ -252,7 +247,6 @@ export function PromptingPage() {
           <p>La primera respuesta muestra qué falta. Cambia una instrucción o un dato concreto y compara el resultado antes de añadir más detalles.</p>
         </div>
         <div className="iteration-track" aria-label="Ciclo de mejora del prompt">
-          <div className="iteration-line" />
           <article className="iteration-step step-ask">
             <span className="iteration-number">01</span>
             <div className="iteration-icon"><MessageSquareText size={19} /></div>
@@ -263,7 +257,7 @@ export function PromptingPage() {
           <article className="iteration-step step-review">
             <span className="iteration-number">02</span>
             <div className="iteration-icon"><Compass size={19} /></div>
-            <h3>Compara</h3>
+            <h3>Verifica</h3>
             <p>Busca la diferencia con lo que esperabas.</p>
             <div className="iteration-bubble">¿Faltan responsables y fechas?</div>
           </article>

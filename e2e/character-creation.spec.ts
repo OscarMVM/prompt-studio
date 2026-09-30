@@ -1,3 +1,4 @@
+import { env } from 'node:process'
 import { expect, test, type Page } from '@playwright/test'
 
 async function fillField(page: Page, label: string, value: string) {
@@ -106,6 +107,37 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/characters\/[^/]+\/workflow$/)
   await expect(page.getByRole('link', { name: 'Ferrum', exact: true })).toBeVisible()
+  await page.getByRole('tab', { name: 'Prompt', exact: true }).click()
+  const generatedPrompt = page
+    .getByRole('tabpanel', { name: 'Prompt' })
+    .locator('p.whitespace-pre-wrap')
+  await expect(generatedPrompt).toContainText('Genera una imagen conceptual')
+  await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
+
+  if (env.PLAYWRIGHT_KEEP_OPEN === '1') {
+    test.setTimeout(0)
+    console.log('Ferrum está creado y el prompt está visible. Cierra Chromium para finalizar la prueba.')
+    await page.waitForEvent('close')
+    return
+  }
+
+  const stagePrompts = [
+    { label: 'Concepto y Dirección', opening: 'Genera una imagen conceptual' },
+    { label: 'Boceto y Lineart', opening: 'Genera una imagen de boceto y lineart' },
+    { label: 'Vistas del Personaje', opening: 'Genera una imagen tipo hoja de referencia' },
+    { label: 'Paleta y Color', opening: 'Genera una imagen del personaje' },
+    { label: 'Rostro y Expresiones', opening: 'Genera una imagen tipo hoja de expresiones' },
+    { label: 'Acciones y Poses', opening: 'Genera una imagen de cuerpo completo' },
+    { label: 'Render Final', opening: 'Genera una ilustración final' },
+  ]
+
+  for (const stage of stagePrompts) {
+    await page.getByRole('combobox').click()
+    await page.getByRole('option', { name: stage.label, exact: true }).click()
+    await expect(generatedPrompt).toContainText(stage.opening)
+    await expect(generatedPrompt).not.toContainText(/(?:^|\n)(?:Objetivo|Contexto|Formato|Límites):/)
+  }
+
   await page.getByRole('link', { name: 'Editar', exact: true }).click()
   await page.getByRole('tab', { name: 'Ropa y Equipo', exact: true }).click()
   await expect(
@@ -123,9 +155,4 @@ test('crea un monstruo metálico desde el asistente', async ({ page }) => {
       .locator('input')
   ).toHaveValue('Martillo de guerra con cabeza de hierro')
 
-  if (process.env.PLAYWRIGHT_KEEP_OPEN === '1') {
-    test.setTimeout(0)
-    console.log('La prueba terminó; cierra la ventana de Chromium para finalizar el proceso.')
-    await page.waitForEvent('close')
-  }
 })
