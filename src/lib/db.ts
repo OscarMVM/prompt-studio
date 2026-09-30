@@ -56,4 +56,13 @@ db.version(2).stores({
   }
 })
 
+db.version(3).stores({
+  characters: 'id, name, createdAt, updatedAt',
+  workflows: 'id, characterId, createdAt, updatedAt',
+}).upgrade(async (tx) => {
+  await tx.table('characters').toCollection().modify((character) => {
+    delete character.materials
+  })
+})
+
 export default db

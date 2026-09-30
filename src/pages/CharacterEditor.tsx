@@ -14,7 +14,6 @@ import {
   User,
   Eye,
   Shirt,
-  Swords,
   Palette,
   Sparkles,
   Heart,
@@ -243,7 +242,7 @@ function AppearanceTab({
   )
 }
 
-function ClothingTab({
+function ClothingEquipmentTab({
   character,
   onUpdate,
 }: {
@@ -251,147 +250,59 @@ function ClothingTab({
   onUpdate: (updates: Partial<CharacterBible>) => void
 }) {
   const cloth = character.clothing
+  const equip = character.equipment
   const updateCloth = (updates: Partial<typeof cloth>) =>
     onUpdate({ clothing: { ...cloth, ...updates } })
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <FieldGroup label="Cabeza" value={cloth.head} onChange={(v) => updateCloth({ head: v })} />
-      <FieldGroup label="Torso" value={cloth.torso} onChange={(v) => updateCloth({ torso: v })} />
-      <FieldGroup label="Piernas" value={cloth.legs} onChange={(v) => updateCloth({ legs: v })} />
-      <FieldGroup
-        label="Calzado"
-        value={cloth.footwear}
-        onChange={(v) => updateCloth({ footwear: v })}
-      />
-      <FieldGroup
-        label="Guantes"
-        value={cloth.gloves}
-        onChange={(v) => updateCloth({ gloves: v })}
-      />
-      <FieldGroup label="Capa" value={cloth.cape} onChange={(v) => updateCloth({ cape: v })} />
-      <FieldGroup label="Cinturón" value={cloth.belt} onChange={(v) => updateCloth({ belt: v })} />
-      <FieldGroup
-        label="Armadura"
-        value={cloth.armor}
-        onChange={(v) => updateCloth({ armor: v })}
-      />
-      <FieldGroup
-        label="Joyería"
-        value={cloth.jewelry}
-        onChange={(v) => updateCloth({ jewelry: v })}
-      />
-      <FieldGroup
-        label="Accesorios"
-        value={cloth.accessories}
-        onChange={(v) => updateCloth({ accessories: v })}
-      />
-    </div>
-  )
-}
-
-function EquipmentTab({
-  character,
-  onUpdate,
-}: {
-  character: CharacterBible
-  onUpdate: (updates: Partial<CharacterBible>) => void
-}) {
-  const equip = character.equipment
   const updateEquip = (updates: Partial<typeof equip>) =>
     onUpdate({ equipment: { ...equip, ...updates } })
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <FieldGroup
-        label="Armas"
-        value={equip.weapons}
-        onChange={(v) => updateEquip({ weapons: v })}
-      />
-      <FieldGroup
-        label="Escudos"
-        value={equip.shields}
-        onChange={(v) => updateEquip({ shields: v })}
-      />
-      <FieldGroup
-        label="Herramientas"
-        value={equip.tools}
-        onChange={(v) => updateEquip({ tools: v })}
-      />
-      <FieldGroup
-        label="Mochila"
-        value={equip.backpack}
-        onChange={(v) => updateEquip({ backpack: v })}
-      />
-      <FieldGroup
-        label="Instrumentos"
-        value={equip.instruments}
-        onChange={(v) => updateEquip({ instruments: v })}
-      />
-      <FieldGroup
-        label="Objetos Mágicos"
-        value={equip.magicItems}
-        onChange={(v) => updateEquip({ magicItems: v })}
-      />
-      <FieldGroup
-        label="Tecnología"
-        value={equip.technology}
-        onChange={(v) => updateEquip({ technology: v })}
-      />
-      <FieldGroup
-        label="Mascotas"
-        value={equip.pets}
-        onChange={(v) => updateEquip({ pets: v })}
-      />
+    <div className="space-y-6">
+      <section>
+        <h3 className="text-sm font-medium mb-3">Ropa</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <FieldGroup label="Cabeza" value={cloth.head} onChange={(v) => updateCloth({ head: v })} />
+          <FieldGroup label="Torso" value={cloth.torso} onChange={(v) => updateCloth({ torso: v })} />
+          <FieldGroup label="Piernas" value={cloth.legs} onChange={(v) => updateCloth({ legs: v })} />
+          <FieldGroup label="Calzado" value={cloth.footwear} onChange={(v) => updateCloth({ footwear: v })} />
+          <FieldGroup label="Guantes" value={cloth.gloves} onChange={(v) => updateCloth({ gloves: v })} />
+          <FieldGroup label="Capa" value={cloth.cape} onChange={(v) => updateCloth({ cape: v })} />
+          <FieldGroup label="Cinturón" value={cloth.belt} onChange={(v) => updateCloth({ belt: v })} />
+          <FieldGroup label="Armadura" value={cloth.armor} onChange={(v) => updateCloth({ armor: v })} />
+          <FieldGroup label="Joyería" value={cloth.jewelry} onChange={(v) => updateCloth({ jewelry: v })} />
+          <FieldGroup label="Accesorios" value={cloth.accessories} onChange={(v) => updateCloth({ accessories: v })} />
+        </div>
+      </section>
+      <section>
+        <h3 className="text-sm font-medium mb-3">Equipo</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <FieldGroup label="Armas" value={equip.weapons} onChange={(v) => updateEquip({ weapons: v })} />
+          <FieldGroup label="Escudos" value={equip.shields} onChange={(v) => updateEquip({ shields: v })} />
+          <FieldGroup label="Herramientas" value={equip.tools} onChange={(v) => updateEquip({ tools: v })} />
+          <FieldGroup label="Mochila" value={equip.backpack} onChange={(v) => updateEquip({ backpack: v })} />
+          <FieldGroup label="Instrumentos" value={equip.instruments} onChange={(v) => updateEquip({ instruments: v })} />
+          <FieldGroup label="Objetos Mágicos" value={equip.magicItems} onChange={(v) => updateEquip({ magicItems: v })} />
+          <FieldGroup label="Tecnología" value={equip.technology} onChange={(v) => updateEquip({ technology: v })} />
+          <FieldGroup label="Mascotas" value={equip.pets} onChange={(v) => updateEquip({ pets: v })} />
+        </div>
+      </section>
     </div>
   )
 }
 
-function MaterialsColorsTab({
+function ColorsTab({
   character,
   onUpdate,
 }: {
   character: CharacterBible
   onUpdate: (updates: Partial<CharacterBible>) => void
 }) {
-  const mat = character.materials
   const col = character.colors
-  const updateMat = (updates: Partial<typeof mat>) =>
-    onUpdate({ materials: { ...mat, ...updates } })
   const updateCol = (updates: Partial<typeof col>) =>
     onUpdate({ colors: { ...col, ...updates } })
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-sm font-medium mb-3">Materiales</h3>
-        <div className="grid gap-4 md:grid-cols-3">
-          <FieldGroup label="Tela" value={mat.fabric} onChange={(v) => updateMat({ fabric: v })} />
-          <FieldGroup label="Metal" value={mat.metal} onChange={(v) => updateMat({ metal: v })} />
-          <FieldGroup
-            label="Cuero"
-            value={mat.leather}
-            onChange={(v) => updateMat({ leather: v })}
-          />
-          <FieldGroup label="Madera" value={mat.wood} onChange={(v) => updateMat({ wood: v })} />
-          <FieldGroup
-            label="Cristal"
-            value={mat.crystal}
-            onChange={(v) => updateMat({ crystal: v })}
-          />
-          <FieldGroup label="Piedra" value={mat.stone} onChange={(v) => updateMat({ stone: v })} />
-          <FieldGroup label="Hueso" value={mat.bone} onChange={(v) => updateMat({ bone: v })} />
-          <FieldGroup
-            label="Plástico"
-            value={mat.plastic}
-            onChange={(v) => updateMat({ plastic: v })}
-          />
-          <FieldGroup label="Fibra" value={mat.fiber} onChange={(v) => updateMat({ fiber: v })} />
-        </div>
-      </div>
-      <div>
-        <h3 className="text-sm font-medium mb-3">Colores</h3>
-        <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-3">
           <FieldGroup
             label="Color Primario"
             value={col.primary}
@@ -422,8 +333,6 @@ function MaterialsColorsTab({
             value={col.saturation}
             onChange={(v) => updateCol({ saturation: v })}
           />
-        </div>
-      </div>
     </div>
   )
 }
@@ -629,14 +538,11 @@ export function CharacterEditor() {
           <TabsTrigger value="emotional-palette">
             <Heart className="mr-1 h-3 w-3" /> Emociones
           </TabsTrigger>
-          <TabsTrigger value="clothing">
-            <Shirt className="mr-1 h-3 w-3" /> Ropa
+          <TabsTrigger value="clothing-equipment">
+            <Shirt className="mr-1 h-3 w-3" /> Ropa y Equipo
           </TabsTrigger>
-          <TabsTrigger value="equipment">
-            <Swords className="mr-1 h-3 w-3" /> Equipo
-          </TabsTrigger>
-          <TabsTrigger value="materials-colors">
-            <Palette className="mr-1 h-3 w-3" /> Materiales y Colores
+          <TabsTrigger value="colors">
+            <Palette className="mr-1 h-3 w-3" /> Colores
           </TabsTrigger>
           <TabsTrigger value="visual-personality">
             <Sparkles className="mr-1 h-3 w-3" /> Personalidad Visual
@@ -656,14 +562,11 @@ export function CharacterEditor() {
           <TabsContent value="emotional-palette">
             <EmotionalPaletteTab character={character} onUpdate={handleUpdate} />
           </TabsContent>
-          <TabsContent value="clothing">
-            <ClothingTab character={character} onUpdate={handleUpdate} />
+          <TabsContent value="clothing-equipment">
+            <ClothingEquipmentTab character={character} onUpdate={handleUpdate} />
           </TabsContent>
-          <TabsContent value="equipment">
-            <EquipmentTab character={character} onUpdate={handleUpdate} />
-          </TabsContent>
-          <TabsContent value="materials-colors">
-            <MaterialsColorsTab character={character} onUpdate={handleUpdate} />
+          <TabsContent value="colors">
+            <ColorsTab character={character} onUpdate={handleUpdate} />
           </TabsContent>
           <TabsContent value="visual-personality">
             <VisualPersonalityTab character={character} onUpdate={handleUpdate} />

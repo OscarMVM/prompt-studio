@@ -82,18 +82,6 @@ export interface Equipment {
   pets?: string
 }
 
-export interface Materials {
-  fabric?: string
-  metal?: string
-  leather?: string
-  wood?: string
-  crystal?: string
-  stone?: string
-  bone?: string
-  plastic?: string
-  fiber?: string
-}
-
 export interface Colors {
   primary?: string
   secondary?: string
@@ -145,7 +133,6 @@ export interface CharacterBible {
   appearance: Appearance
   clothing: Clothing
   equipment: Equipment
-  materials: Materials
   colors: Colors
   visualPersonality: VisualPersonalityTag[]
   emotionalPalette: EmotionalPaletteTag[]

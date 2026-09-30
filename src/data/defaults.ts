@@ -18,7 +18,6 @@ export function createDefaultCharacter(): CharacterBible {
     },
     clothing: {},
     equipment: {},
-    materials: {},
     colors: {},
     visualPersonality: [],
     emotionalPalette: [],

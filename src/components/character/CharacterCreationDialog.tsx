@@ -21,7 +21,6 @@ import type {
   Appearance,
   Clothing,
   Equipment,
-  Materials,
   Colors,
   VisualPersonalityTag,
   EmotionalPaletteTag,
@@ -34,7 +33,6 @@ import {
   Eye,
   Heart,
   Shirt,
-  Swords,
   Palette,
   Check,
 } from 'lucide-react'
@@ -51,7 +49,6 @@ interface WizardData {
   appearance: Appearance
   clothing: Clothing
   equipment: Equipment
-  materials: Materials
   colors: Colors
   visualPersonality: VisualPersonalityTag[]
   emotionalPalette: EmotionalPaletteTag[]
@@ -62,8 +59,7 @@ const STEPS = [
   { label: 'General', icon: User },
   { label: 'Apariencia', icon: Eye },
   { label: 'Emociones', icon: Heart },
-  { label: 'Ropa', icon: Shirt },
-  { label: 'Equipo', icon: Swords },
+  { label: 'Ropa y Equipo', icon: Shirt },
   { label: 'Colores', icon: Palette },
   { label: 'Resumen', icon: Check },
 ]
@@ -363,7 +359,7 @@ function StepEmotions({
   )
 }
 
-function StepClothing({
+function StepClothingEquipment({
   data,
   onUpdate,
 }: {
@@ -374,38 +370,27 @@ function StepClothing({
   const updateCloth = (updates: Partial<Clothing>) =>
     onUpdate({ clothing: { ...cloth, ...updates } })
 
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <FieldGroup label="Cabeza" value={cloth.head} onChange={(v) => updateCloth({ head: v })} />
-      <FieldGroup label="Torso" value={cloth.torso} onChange={(v) => updateCloth({ torso: v })} />
-      <FieldGroup label="Piernas" value={cloth.legs} onChange={(v) => updateCloth({ legs: v })} />
-      <FieldGroup label="Calzado" value={cloth.footwear} onChange={(v) => updateCloth({ footwear: v })} />
-      <FieldGroup label="Guantes" value={cloth.gloves} onChange={(v) => updateCloth({ gloves: v })} />
-      <FieldGroup label="Capa" value={cloth.cape} onChange={(v) => updateCloth({ cape: v })} />
-      <FieldGroup label="Cinturón" value={cloth.belt} onChange={(v) => updateCloth({ belt: v })} />
-      <FieldGroup label="Armadura" value={cloth.armor} onChange={(v) => updateCloth({ armor: v })} />
-      <FieldGroup label="Joyería" value={cloth.jewelry} onChange={(v) => updateCloth({ jewelry: v })} />
-      <FieldGroup label="Accesorios" value={cloth.accessories} onChange={(v) => updateCloth({ accessories: v })} />
-    </div>
-  )
-}
-
-function StepEquipment({
-  data,
-  onUpdate,
-}: {
-  data: WizardData
-  onUpdate: (updates: Partial<WizardData>) => void
-}) {
   const equip = data.equipment
-  const mat = data.materials
   const updateEquip = (updates: Partial<Equipment>) =>
     onUpdate({ equipment: { ...equip, ...updates } })
-  const updateMat = (updates: Partial<Materials>) =>
-    onUpdate({ materials: { ...mat, ...updates } })
 
   return (
     <div className="space-y-6">
+      <div>
+        <h3 className="text-sm font-medium mb-3">Ropa</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <FieldGroup label="Cabeza" value={cloth.head} onChange={(v) => updateCloth({ head: v })} />
+          <FieldGroup label="Torso" value={cloth.torso} onChange={(v) => updateCloth({ torso: v })} />
+          <FieldGroup label="Piernas" value={cloth.legs} onChange={(v) => updateCloth({ legs: v })} />
+          <FieldGroup label="Calzado" value={cloth.footwear} onChange={(v) => updateCloth({ footwear: v })} />
+          <FieldGroup label="Guantes" value={cloth.gloves} onChange={(v) => updateCloth({ gloves: v })} />
+          <FieldGroup label="Capa" value={cloth.cape} onChange={(v) => updateCloth({ cape: v })} />
+          <FieldGroup label="Cinturón" value={cloth.belt} onChange={(v) => updateCloth({ belt: v })} />
+          <FieldGroup label="Armadura" value={cloth.armor} onChange={(v) => updateCloth({ armor: v })} />
+          <FieldGroup label="Joyería" value={cloth.jewelry} onChange={(v) => updateCloth({ jewelry: v })} />
+          <FieldGroup label="Accesorios" value={cloth.accessories} onChange={(v) => updateCloth({ accessories: v })} />
+        </div>
+      </div>
       <div>
         <h3 className="text-sm font-medium mb-3">Equipo</h3>
         <div className="grid gap-4 md:grid-cols-2">
@@ -417,20 +402,6 @@ function StepEquipment({
           <FieldGroup label="Objetos Mágicos" value={equip.magicItems} onChange={(v) => updateEquip({ magicItems: v })} />
           <FieldGroup label="Tecnología" value={equip.technology} onChange={(v) => updateEquip({ technology: v })} />
           <FieldGroup label="Mascotas" value={equip.pets} onChange={(v) => updateEquip({ pets: v })} />
-        </div>
-      </div>
-      <div>
-        <h3 className="text-sm font-medium mb-3">Materiales</h3>
-        <div className="grid gap-4 md:grid-cols-3">
-          <FieldGroup label="Tela" value={mat.fabric} onChange={(v) => updateMat({ fabric: v })} />
-          <FieldGroup label="Metal" value={mat.metal} onChange={(v) => updateMat({ metal: v })} />
-          <FieldGroup label="Cuero" value={mat.leather} onChange={(v) => updateMat({ leather: v })} />
-          <FieldGroup label="Madera" value={mat.wood} onChange={(v) => updateMat({ wood: v })} />
-          <FieldGroup label="Cristal" value={mat.crystal} onChange={(v) => updateMat({ crystal: v })} />
-          <FieldGroup label="Piedra" value={mat.stone} onChange={(v) => updateMat({ stone: v })} />
-          <FieldGroup label="Hueso" value={mat.bone} onChange={(v) => updateMat({ bone: v })} />
-          <FieldGroup label="Plástico" value={mat.plastic} onChange={(v) => updateMat({ plastic: v })} />
-          <FieldGroup label="Fibra" value={mat.fiber} onChange={(v) => updateMat({ fiber: v })} />
         </div>
       </div>
     </div>
@@ -529,17 +500,12 @@ function StepSummary({ data }: { data: WizardData }) {
       ],
     },
     {
-      title: 'Ropa',
+      title: 'Ropa y Equipo',
       items: [
         { label: 'Torso', value: data.clothing.torso },
         { label: 'Piernas', value: data.clothing.legs },
         { label: 'Calzado', value: data.clothing.footwear },
         { label: 'Armadura', value: data.clothing.armor },
-      ],
-    },
-    {
-      title: 'Equipo',
-      items: [
         { label: 'Armas', value: data.equipment.weapons },
         { label: 'Escudos', value: data.equipment.shields },
         { label: 'Mascotas', value: data.equipment.pets },
@@ -592,7 +558,6 @@ export function CharacterCreationDialog({
     appearance: { hair: {}, eyes: {} },
     clothing: {},
     equipment: {},
-    materials: {},
     colors: {},
     visualPersonality: [],
     emotionalPalette: [],
@@ -626,7 +591,6 @@ export function CharacterCreationDialog({
       appearance: data.appearance,
       clothing: data.clothing,
       equipment: data.equipment,
-      materials: data.materials,
       colors: data.colors,
       visualPersonality: data.visualPersonality,
       emotionalPalette: data.emotionalPalette,
@@ -643,7 +607,6 @@ export function CharacterCreationDialog({
       appearance: { hair: {}, eyes: {} },
       clothing: {},
       equipment: {},
-      materials: {},
       colors: {},
       visualPersonality: [],
       emotionalPalette: [],
@@ -666,12 +629,10 @@ export function CharacterCreationDialog({
       case 2:
         return <StepEmotions data={data} onUpdate={handleUpdate} />
       case 3:
-        return <StepClothing data={data} onUpdate={handleUpdate} />
+        return <StepClothingEquipment data={data} onUpdate={handleUpdate} />
       case 4:
-        return <StepEquipment data={data} onUpdate={handleUpdate} />
-      case 5:
         return <StepColors data={data} onUpdate={handleUpdate} />
-      case 6:
+      case 5:
         return <StepSummary data={data} />
       default:
         return null

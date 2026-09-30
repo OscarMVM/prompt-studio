@@ -39,7 +39,6 @@ export function WorkflowExportDialog() {
             appearance: character.appearance,
             clothing: character.clothing,
             equipment: character.equipment,
-            materials: character.materials,
             colors: character.colors,
             visualPersonality: character.visualPersonality,
           }
