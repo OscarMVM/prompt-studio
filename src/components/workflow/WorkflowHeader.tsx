@@ -38,7 +38,7 @@ export function WorkflowHeader() {
           render={<Link to={`/characters/${workflow.characterId}`} />}
         >
           <Pencil className="mr-1 h-3 w-3" />
-          Editar
+          Editar personaje
         </Button>
       </div>
 
