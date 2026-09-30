@@ -654,6 +654,10 @@ export function CharacterCreationDialog({
           <DialogDescription>
             Paso {step + 1} de {STEPS.length}
           </DialogDescription>
+          <p className="text-xs text-muted-foreground">
+            Ningún campo es obligatorio. Completa solo los que necesite tu personaje: los campos
+            vacíos se omiten del prompt automáticamente.
+          </p>
         </DialogHeader>
 
         <div className="flex gap-1 mb-2">
